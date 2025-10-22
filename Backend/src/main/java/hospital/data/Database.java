@@ -27,9 +27,10 @@ public class Database {
     }
 
     public Connection getConnection() {
-        try{
+        try {
             Properties prop = new Properties();
             prop.load(getClass().getResourceAsStream(PROPERTY_FILE_NAME));
+
             String driver = prop.getProperty("database_driver");
             String server = prop.getProperty("database_server");
             String port = prop.getProperty("database_port");
@@ -39,32 +40,22 @@ public class Database {
 
             String URL_conexion = "jdbc:mysql://" + server + ":" + port + "/" +
                     database + "?user=" + user + "&password=" + password + "&serverTimezone=UTC";
+
             Class.forName(driver).newInstance();
             cnx = DriverManager.getConnection(URL_conexion);
 
-//            Properties prop = new Properties();
-//            URL resourceUrl = getClass().getResource(PROPERTY_FILE_NAME);
-//            File file = new File(resourceUrl.toURI());
-//            prop.load(new BufferedInputStream(new FileInputStream(file)));
-//            String driver = prop.getProperty("database_driver");
-//            String server = prop.getProperty("database_server");
-//            String port = prop.getProperty("database_port");
-//            String user = prop.getProperty("database_user");
-//            String password = prop.getProperty("database_password");
-//            String database = prop.getProperty("database_name");
-//
-//            String URL_conexion = "jdbc:mysql://"+ server+":"+port+"/"+
-//                    database+"?user="+user+"&password="+password+"&serverTimezone=UTC";
-//            Class.forName(driver).newInstance();
-//            return DriverManager.getConnection(URL_conexion);
+            System.out.println("Conexión establecida a la base de datos " + database);
+            return cnx;
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println("Error al conectar: " + e.getMessage());
+            e.printStackTrace();
             System.out.println("CNX:" + cnx);
             System.exit(-1);
+            return null;
         }
-        return null;
     }
+
 
     public PreparedStatement preparedStatement(String statement) throws SQLException {
         System.out.print("STM:" + statement);
