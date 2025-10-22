@@ -14,8 +14,6 @@ public class Worker {
     ObjectOutputStream os;
     ObjectInputStream is;
 
-    boolean continuar;
-
     public Worker(Server srv, Socket socket, Service service) {
         try{this.srv = srv;
             this.socket = socket;
@@ -27,6 +25,7 @@ public class Worker {
         }
     }
 
+    boolean continuar;
     public void start(){
         try{
             System.out.println("Worker atendiendo peticiones...");
@@ -35,6 +34,8 @@ public class Worker {
                         public void run() {listen();}
                     }
             );
+            continuar = true;
+            t.start();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

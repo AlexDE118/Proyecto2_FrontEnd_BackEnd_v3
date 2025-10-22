@@ -54,7 +54,7 @@ public class Service {
         os.writeInt(Protocol.DOCTOR_CREATE);
         os.writeObject(doctor);
         os.flush();
-        if (is.readInt() != Protocol.ERROR_NO_ERROR) {
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
             System.out.println("Doctor creado");
         }
         else throw new Exception("El doctor ya existe");
