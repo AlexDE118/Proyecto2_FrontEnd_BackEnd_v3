@@ -20,6 +20,10 @@ public class Database {
     Connection cnx;
     public Database() {
         cnx = this.getConnection();
+        if (cnx == null){
+            System.out.println("Error: No connection established - cnx is NULL");
+            System.out.println(cnx);
+        }
     }
 
     public Connection getConnection() {
@@ -56,12 +60,15 @@ public class Database {
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            System.out.println("CNX:" + cnx);
             System.exit(-1);
         }
         return null;
     }
 
     public PreparedStatement preparedStatement(String statement) throws SQLException {
+        System.out.print("STM:" + statement);
+        System.out.println("CNX:" + cnx);
         return cnx.prepareStatement(statement);
     }
 
