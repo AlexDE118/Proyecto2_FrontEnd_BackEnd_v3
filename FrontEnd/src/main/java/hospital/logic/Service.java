@@ -495,16 +495,33 @@ public class Service {
         return usuarios;
     }
 
-    public Usuario readUsuario(Usuario usuario) throws Exception{
+    public Usuario readUsuario(Usuario usuario) throws Exception {
         System.out.println("Buscando usuario con ID: '" + usuario.getId() + "'");
         os.writeInt(Protocol.USER_READ);
         os.writeObject(usuario);
         os.flush();
-        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
-            return (Usuario) is.readObject();
+
+        int status = is.readInt();
+        System.out.println("Código de respuesta del servidor: " + status);
+
+        if (status == Protocol.ERROR_NO_ERROR) {
+            Object recibido = is.readObject();
+            System.out.println("Objeto recibido del backend: " + recibido.getClass().getName());
+
+            if (recibido instanceof Usuario) {
+                Usuario u = (Usuario) recibido;
+                System.out.println("Usuario leído correctamente: " + u.getId() + " - Tipo: " + u.getUserType());
+                return u;
+            } else {
+                System.out.println("⚠️ El backend devolvió un tipo inesperado: " + recibido.getClass().getName());
+                throw new Exception("Tipo de objeto inesperado (" + recibido.getClass().getName() + ")");
+            }
+
+        } else {
+            throw new Exception("Usuario no existe");
         }
-        else throw new Exception("Usuario no existe");
     }
+
 
     public void addUsuario(Usuario usuario) {
         try {

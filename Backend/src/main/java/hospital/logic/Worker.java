@@ -57,7 +57,7 @@ public class Worker {
 
                     //Doctores
 
-
+//
                     case Protocol.DOCTOR_CREATE:
                         try {
                             service.createDoctor((Doctor) is.readObject());
@@ -195,6 +195,7 @@ public class Worker {
                             os.writeInt(Protocol.ERROR_ERROR);
                             System.out.println(e.getMessage());
                         }
+                        break;
 
 
                     //Farmaceutas
@@ -430,15 +431,24 @@ public class Worker {
                         }
                         break;
                     case Protocol.USER_READ:
-                        try{
-                            Usuario usuario = service.readUsuario((Usuario) is.readObject());
+                        try {
+                            Usuario recibido = (Usuario) is.readObject();
+                            Usuario usuario = service.readUsuario(recibido);
+
+                            System.out.println("Devolviendo al frontend: " + usuario.getClass().getName());
                             os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.reset();
                             os.writeObject(usuario);
-                        } catch (Exception e){
+                            os.flush();
+
+                        } catch (Exception e) {
                             os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
+                            os.flush();
+                            System.out.println("Error USER_READ: " + e.getMessage());
+                            e.printStackTrace();
                         }
                         break;
+
                     case Protocol.USER_UPDATE:
                         try{
                             System.out.println("PROTOCOL USER UPDATE: ");

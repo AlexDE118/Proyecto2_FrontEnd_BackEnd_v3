@@ -1,6 +1,8 @@
 package hospital.logic;
 
-public class Medicamento {
+import java.io.Serializable;
+
+public class Medicamento implements Serializable {
     private String codigo;
     private String nombre;
     private String presentacion;

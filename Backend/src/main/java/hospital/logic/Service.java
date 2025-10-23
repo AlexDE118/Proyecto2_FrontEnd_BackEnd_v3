@@ -318,6 +318,7 @@ public class Service {
         System.out.println("Buscando usuario con ID: '" + usuario.getId() + "'");
         Usuario result = usuarioDAO.read(usuario);
         if(result != null){
+            System.out.println("Clase devuelta por DAO: " + result.getClass().getName());
             return result;
         }else{
             throw new Exception("Usuario no existe");

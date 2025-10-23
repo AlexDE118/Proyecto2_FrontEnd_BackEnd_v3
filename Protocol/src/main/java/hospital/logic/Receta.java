@@ -1,7 +1,9 @@
 package hospital.logic;
 
 
-public class Receta {
+import java.io.Serializable;
+
+public class Receta implements Serializable {
     Medicamento medicamentos;
     int numero;
     int cantidad;

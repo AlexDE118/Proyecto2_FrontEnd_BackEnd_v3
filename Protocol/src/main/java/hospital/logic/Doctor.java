@@ -1,6 +1,8 @@
 package hospital.logic;
 
-public class Doctor extends Persona {
+import java.io.Serializable;
+
+public class Doctor extends Persona implements Serializable  {
     //Atributos
     private String especialidad;
     private String clave;

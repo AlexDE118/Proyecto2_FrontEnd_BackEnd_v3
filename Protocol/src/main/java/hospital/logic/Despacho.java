@@ -1,9 +1,10 @@
 package hospital.logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Despacho {
+public class Despacho implements Serializable {
      List<Prescripcion> prescripciones;
 
      public Despacho() {

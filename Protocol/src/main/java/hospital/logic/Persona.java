@@ -1,6 +1,8 @@
 package hospital.logic;
 
-public class Persona {
+import java.io.Serializable;
+
+public class Persona implements Serializable {
     //Atributos
     protected String id;
     protected String nombre;

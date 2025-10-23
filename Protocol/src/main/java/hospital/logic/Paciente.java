@@ -1,6 +1,8 @@
 package hospital.logic;
 
-public class Paciente{
+import java.io.Serializable;
+
+public class Paciente implements Serializable {
     //Attritubtos
     String id;
     String nombre;

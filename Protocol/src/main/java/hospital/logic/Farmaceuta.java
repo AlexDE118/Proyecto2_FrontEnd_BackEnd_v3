@@ -1,6 +1,8 @@
 package hospital.logic;
 
-public class Farmaceuta {
+import java.io.Serializable;
+
+public class Farmaceuta implements Serializable {
     //Atributos
     private String id;
     private String nombre;
