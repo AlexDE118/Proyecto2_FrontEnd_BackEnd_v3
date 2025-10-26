@@ -100,6 +100,7 @@ public class PacienteDAO {
                 resultado.add(p);
             }
         } catch (SQLException ex) {}
+        System.out.println("Pacientes found: " + resultado.size());
         return resultado;
     }
 

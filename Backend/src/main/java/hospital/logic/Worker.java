@@ -14,14 +14,44 @@ public class Worker {
     ObjectOutputStream os;
     ObjectInputStream is;
 
-    public Worker(Server srv, Socket socket, Service service) {
-        try{this.srv = srv;
-            this.socket = socket;
-            os = new ObjectOutputStream(socket.getOutputStream());
-            is = new ObjectInputStream(socket.getInputStream());
-            this.service = service;
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    String sid; // Session id
+    Socket as; // Asynch Socket
+    ObjectOutputStream aos;
+    ObjectInputStream ais;
+
+//    public Worker(Server srv, Socket socket, Service service) {
+//        try{this.srv = srv;
+//            this.socket = socket;
+//            os = new ObjectOutputStream(socket.getOutputStream());
+//            is = new ObjectInputStream(socket.getInputStream());
+//            this.service = service;
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
+
+    public Worker(Server srv, Socket socket, ObjectOutputStream os, ObjectInputStream is, Service service, String sid) {
+        this.srv = srv;
+        this.socket = socket;
+        this.os = os;
+        this.is = is;
+        this.service = service;
+        this.sid = sid;
+    }
+
+    public void setAs(Socket as, ObjectOutputStream aos, ObjectInputStream ais) {
+        this.as = as;
+        this.ais = ais;
+        this.aos = aos;
+    }
+
+    public void deliver_message(String message) {
+        if(as != null){
+            try{
+                aos.writeInt(999 /*Implementar Protocol.DELIVER_MESSAGE*/);
+                aos.writeObject(message);
+                aos.flush();
+            } catch (Exception e) { }
         }
     }
 

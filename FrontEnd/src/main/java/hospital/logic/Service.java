@@ -22,15 +22,29 @@ public class Service {
     private ObjectInputStream is;
     private ObjectOutputStream os;
 
+    String sid; // Session ID;
+
     private Service(){
         try{
             s = new Socket(Protocol.SERVER, Protocol.PORT);
             os = new ObjectOutputStream(s.getOutputStream());
             is = new ObjectInputStream(s.getInputStream());
 
+            os.writeInt(Protocol.SYNC);
+            os.flush();
+            sid = (String) is.readObject(); //Stores returned Session ID;
+
         } catch (Exception e){
             System.exit(-1);
         }
+    }
+
+    public String getSid() {
+        return sid;
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
     }
 
     private void disconnect() throws Exception {
@@ -144,7 +158,8 @@ public class Service {
             os.flush();
             if(is.readInt() == Protocol.ERROR_NO_ERROR) pacientes = (List<Paciente>) is.readObject();
         } catch (Exception ex){
-            throw new RuntimeException(ex);
+            System.out.println(ex.getMessage());
+            //throw new RuntimeException(ex);
         }
         return pacientes;
     }
