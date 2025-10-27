@@ -2,7 +2,7 @@ package hospital.logic;
 
 import java.io.Serializable;
 
-public class Medicamento implements Serializable {
+public class Medicamento implements Serializable { //AA
     private String codigo;
     private String nombre;
     private String presentacion;

@@ -206,7 +206,7 @@ public class Service {
         os.writeInt(Protocol.FARMACEUTA_CREATE);
         os.writeObject(farmaceuta);
         os.flush();
-        if (is.readInt() != Protocol.ERROR_NO_ERROR) {
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
             System.out.println("Farmaceuta creado");
         }
         else throw new Exception("Farmaceuta no existe");
