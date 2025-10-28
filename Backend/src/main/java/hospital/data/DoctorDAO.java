@@ -118,7 +118,7 @@ public class DoctorDAO {
     private Doctor from(ResultSet rs, String alias){
         try{
           Doctor doctor = new Doctor();
-          doctor.setId(alias+".id");
+          doctor.setId(rs.getString(alias+".id"));
           doctor.setNombre(rs.getString(alias+".nombre"));
           doctor.setEspecialidad(rs.getString(alias+".especialidad"));
           doctor.setClave(rs.getString(alias+".clave"));
