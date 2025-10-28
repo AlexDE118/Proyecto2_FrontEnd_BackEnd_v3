@@ -13,6 +13,8 @@ public class Controller {
         view.setController(this);
         view.setModel(model);
         model.addPropertyChangeListener(view);
+
+        loadPacientes();
     }
 
     public void createPaciente(Paciente p) throws Exception{

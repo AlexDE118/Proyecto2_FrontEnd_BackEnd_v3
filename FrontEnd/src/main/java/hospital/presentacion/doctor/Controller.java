@@ -11,6 +11,8 @@ public class Controller {
         this.model = model;
         view.setController(this);
         view.setModel(model);
+
+        loadDoctors();
     }
 
     public void readDoctor(String id) throws Exception{

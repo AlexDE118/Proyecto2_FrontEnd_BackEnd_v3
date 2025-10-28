@@ -137,10 +137,10 @@ public class Service {
         os.writeInt(Protocol.PACIENTE_CREATE);
         os.writeObject(paciente);
         os.flush();
-        if (is.readInt() != Protocol.ERROR_NO_ERROR) {
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
             System.out.println("Paciente creado");
         }
-        else throw new Exception("Paciente no existe");
+        else throw new Exception("Error al crear paciente");
     }
 
     public Paciente readPaciente(Paciente paciente) throws Exception {

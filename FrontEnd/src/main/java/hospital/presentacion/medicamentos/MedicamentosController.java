@@ -13,6 +13,8 @@ public class MedicamentosController {
         this.model = model;
         view.setController(this);
         view.setModel(model);
+
+        loadMedicamentos();
     }
 
     public void createMedicamentos(Medicamento e) throws Exception {
