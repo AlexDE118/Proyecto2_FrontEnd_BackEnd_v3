@@ -48,7 +48,7 @@ public class Worker {
     public void deliver_message(String message) {
         if(as != null){
             try{
-                aos.writeInt(999 /*Implementar Protocol.DELIVER_MESSAGE*/);
+                aos.writeInt(Protocol.DELIVER_MESSAGE);
                 aos.writeObject(message);
                 aos.flush();
             } catch (Exception e) { }
@@ -74,6 +74,30 @@ public class Worker {
     public void stop(){
         continuar = false;
         System.out.println("Conexion cerrada...");
+    }
+
+    public void deliver_login(Usuario usuario) {
+        if(as != null){
+            try{
+                aos.writeInt(Protocol.LOG_IN);
+                aos.writeObject(usuario);
+                aos.flush();
+            } catch (Exception e) {
+                System.out.println("Error delivering login: " + e.getMessage());
+            }
+        }
+    }
+
+    public void deliver_logout(Usuario usuario) {
+        if(as != null){
+            try{
+                aos.writeInt(Protocol.LOG_OUT);
+                aos.writeObject(usuario);
+                aos.flush();
+            } catch (Exception e) {
+                System.out.println("Error delivering logout: " + e.getMessage());
+            }
+        }
     }
 
     public void listen() {
@@ -505,6 +529,16 @@ public class Worker {
                             System.out.println(e.getMessage());
                         }
                         break;
+                    case Protocol.USER_SEARCH:
+                        try{
+                            Usuario usuario = service.searchUser((Usuario) is.readObject());
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeObject(usuario);
+                        } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
                     case Protocol.USER_UPDATE_PASSWORD:
                         try{
                             service.updateClave((Usuario) is.readObject());
@@ -520,6 +554,35 @@ public class Worker {
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                             os.writeObject(listUsuario);
                         } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case Protocol.DELIVER_MESSAGE:
+                        try{
+                            //service.sendMessage();
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception e) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case Protocol.LOG_IN:
+                        try{
+                            Usuario usuario = (Usuario) is.readObject();
+                            srv.broadcastLogin(usuario);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+                    case Protocol.LOG_OUT:
+                        try {
+                            Usuario usuario = (Usuario) is.readObject();
+                            srv.broadcastLogout(usuario);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception e) {
                             os.writeInt(Protocol.ERROR_ERROR);
                             System.out.println(e.getMessage());
                         }

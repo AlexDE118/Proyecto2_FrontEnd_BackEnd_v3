@@ -1,5 +1,6 @@
 package hospital;
 
+import hospital.logic.Protocol;
 import hospital.logic.Usuario;
 import hospital.logic.Service;
 import hospital.presentacion.Sesion;
@@ -14,6 +15,8 @@ import hospital.presentacion.medicamentos.View3;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class Application {
     public static void main(String[] args) {
@@ -68,6 +71,10 @@ public class Application {
         hospital.presentacion.historico.Model historicoModel = new hospital.presentacion.historico.Model();
         hospital.presentacion.historico.Controller historicoController = new hospital.presentacion.historico.Controller(historicoView,historicoModel);
 
+        //USUARIO
+        hospital.presentacion.usuario.View usuarioView = new hospital.presentacion.usuario.View();
+        hospital.presentacion.usuario.Model usuarioModel = new hospital.presentacion.usuario.Model();
+        hospital.presentacion.usuario.Controller usuarioController = new hospital.presentacion.usuario.Controller(usuarioView, usuarioModel);
 
         // ACERCA DE
         hospital.presentacion.AcercaDe.View acercaDeView = new hospital.presentacion.AcercaDe.View();
@@ -89,6 +96,7 @@ public class Application {
         tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
         tabbedPane.addTab("Historico",historicoView.getHistoricoJPanel());
         tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
+        tabbedPane.addTab("Usuarios",usuarioView.getJPanel_usuario());
 
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
@@ -150,6 +158,7 @@ public class Application {
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     default:
                         JOptionPane.showMessageDialog(window, "Usuario inválido");
@@ -166,15 +175,44 @@ public class Application {
 
 
         loginDialog.setVisible(true);
-
-
         window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                try {
+                    // Notify server that user is logging out
+                    notifyServerLogout(Sesion.getUsuario());
+                } catch (Exception ex) {
+                    // Ignore errors during logout notification
+                }
                 Service.instance().stop();
             }
+
+            private void notifyServerLogout(Usuario usuario) {
+                try {
+                    Socket socket = new Socket(hospital.logic.Protocol.SERVER, hospital.logic.Protocol.PORT);
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeInt(Protocol.LOG_OUT);
+                    out.writeObject(usuario);
+                    out.flush();
+                    out.close();
+                    socket.close();
+                } catch (Exception e) {
+                    System.err.println("Error notifying server of logout: " + e.getMessage());
+                }
+            }
         });
+
+
+//        window.addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                Service.instance().stop();
+//            }
+//        });
     }
+
+    public final static int MODE_CREATE = 1;
+    //public final static int MODE_EDIT = 2;
 }
 
 

@@ -30,22 +30,38 @@ public class View implements PropertyChangeListener {
     public View() {
 
 
+//        logInButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                Usuario usuario = new Usuario();
+//                usuario.setId(id_textField.getText());
+//                usuario.setClave(passwordField1.getText());
+//                try {
+//                    Service.instance().readUsuario(usuario);
+//                    model.setCurrent(usuario);
+//
+//                } catch (Exception ex) {
+//                    JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
+//                }
+//            }
+//        });
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Usuario usuario = new Usuario();
                 usuario.setId(id_textField.getText());
-                usuario.setClave(passwordField1.getText());
+                usuario.setClave(new String(passwordField1.getPassword()));
                 try {
-                    Service.instance().readUsuario(usuario);
-                    model.setCurrent(usuario);
+                    Usuario loggedUser = controller.login(usuario);
+                    model.setCurrent(loggedUser);
+
+                    JOptionPane.showMessageDialog(loginJPanel, "Login exitoso: " + loggedUser.getId());
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
                 }
             }
         });
-
 
         cambiarClaveButton.addActionListener(new ActionListener() {
             @Override

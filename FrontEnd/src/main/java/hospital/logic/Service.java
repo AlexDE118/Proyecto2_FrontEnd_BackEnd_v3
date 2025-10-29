@@ -528,7 +528,7 @@ public class Service {
                 System.out.println("Usuario leído correctamente: " + u.getId() + " - Tipo: " + u.getUserType());
                 return u;
             } else {
-                System.out.println("⚠️ El backend devolvió un tipo inesperado: " + recibido.getClass().getName());
+                System.out.println("El backend devolvió un tipo inesperado: " + recibido.getClass().getName());
                 throw new Exception("Tipo de objeto inesperado (" + recibido.getClass().getName() + ")");
             }
 
@@ -551,6 +551,19 @@ public class Service {
         }
     }
 
+    public void removeUsuario(Usuario usuario) {
+        try{
+            os.writeInt(Protocol.USER_DELETE);
+            os.writeObject(usuario);
+            os.flush();
+            if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+                System.out.println("Usuario eliminado");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Usuario searchUserID(String id) throws Exception {
         Usuario usuario = new Usuario();
         os.writeInt(Protocol.USER_SEARCH_ID);
@@ -560,6 +573,39 @@ public class Service {
             usuario = (Usuario) is.readObject();
             return  usuario;
         } else throw new Exception("Usuario no existe");
+    }
+
+    public Usuario searchUser(Usuario usuario) throws Exception {
+        Usuario result = new Usuario();
+        os.writeInt(Protocol.USER_SEARCH);
+        os.writeObject(usuario);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            result = (Usuario) is.readObject();
+            return  result;
+        } else throw new Exception("Usuario no existe");
+    }
+
+    public List<Usuario> searchUsers(Usuario usuario) throws Exception {
+        List<Usuario> usuarios = new ArrayList<>();
+        os.writeInt(Protocol.USER_SEARCH);
+        os.writeObject(usuario);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            usuarios = (List<Usuario>) is.readObject();
+            return  usuarios;
+        }  else throw new Exception("Usuario no existe");
+    }
+
+    public void sendMessage(Usuario usuario, String message) throws Exception {
+        os.writeInt(Protocol.DELIVER_MESSAGE);
+        os.writeObject(usuario);
+        os.writeObject(message);
+        os.flush();
+
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Mensaje del usuario enviado " + usuario.getId() + " " + message);
+        } throw new Exception("Mensaje del usuario no enviado " + usuario.getId() + " " + message);
     }
 
     public void updateClave(Usuario usuario) throws Exception {
