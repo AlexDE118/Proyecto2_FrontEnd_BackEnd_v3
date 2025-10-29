@@ -65,7 +65,8 @@ public class Protocol {
     public static final int USER_SEARCH_ID = 805;
     public static final int USER_LOADALL = 806;
     public static final int USER_UPDATE_PASSWORD = 807;
-    public static final int USER_SEARCH = 808;
+    public static final int USER_LOGIN = 808;
+    public static final int USER_LOGOUT = 809;
 
     //
 
@@ -74,10 +75,7 @@ public class Protocol {
 
     public static final int SYNC = 10;
     public static final int ASYNC=11;
-
     public static final int DELIVER_MESSAGE=20;
-    public static final int LOG_IN = 21;
-    public static final int LOG_OUT = 22;
 
     public static final int DISCONNECT=99;
 }

@@ -1,10 +1,8 @@
 package hospital.presentacion.usuario;
 
-import hospital.logic.Receta;
 import hospital.logic.Usuario;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -12,14 +10,15 @@ import java.beans.PropertyChangeListener;
 
 public class View implements PropertyChangeListener {
 
-    private JPanel JPanel_usuario;
+    private JPanel JPanel_usuarios;
     private JLabel usuarioSeleccionado;
-    private JButton enviarMensajeButton;
-    private JButton recibirMensajeButton;
+    private JButton enviarButton;
+    private JButton refrescarButton;
+    private JButton recibirButton;
     private JTable usuariosOnline;
 
     public JPanel getJPanel_usuario() {
-        return JPanel_usuario;
+        return JPanel_usuarios;
     }
 
     public JTable getUsuariosOnline() {
@@ -27,17 +26,26 @@ public class View implements PropertyChangeListener {
     }
 
     public View(){
-        enviarMensajeButton.addActionListener(new ActionListener() {
+        enviarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
 
-        recibirMensajeButton.addActionListener(new ActionListener() {
+        recibirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+            }
+        });
+
+        refrescarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //model.getLoggedUsers();
+                System.out.println(model.getLoggedUsers());
+                System.out.println(model.getUsuarios());
             }
         });
 
@@ -45,7 +53,7 @@ public class View implements PropertyChangeListener {
             if(!e.getValueIsAdjusting()){
                 int row = usuariosOnline.getSelectedRow();
                 if(row != -1){
-                    Usuario selected = model.getUsuarios().get(row);
+                    Usuario selected = model.getLoggedUsers().get(row);
                     model.setCurrent(selected);
                 }
             }
@@ -64,7 +72,6 @@ public class View implements PropertyChangeListener {
         this.model = model;
     }
 
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         switch (evt.getPropertyName()){
             case Model.CURRENT:
@@ -73,12 +80,13 @@ public class View implements PropertyChangeListener {
                 } else usuarioSeleccionado.setText("Usuario aun no seleccionado");
                 break;
             case Model.LOGGEDUSERS:
-                int[] cols = {TableModel.ID,TableModel.MENSAJES};
-                TableModel tableModel = new TableModel(cols,model.getLoggedUsers());
+                int[] cols = {TableModel.ID, TableModel.MENSAJES};
+                TableModel tableModel = new TableModel(cols, model.getLoggedUsers());
                 usuariosOnline.setModel(tableModel);
+                // Optional: Adjust column widths if needed
+                //usuariosOnline.getColumnModel().getColumn(TableModel.MENSAJES).setMaxWidth(80);
                 usuariosOnline.updateUI();
                 break;
         }
     }
-
 }

@@ -32,9 +32,9 @@ public class SocketListener {
     private Thread t;
     public void start(){
         t = new Thread(new Runnable() {
-           public void run(){
-               listen();
-           }
+            public void run(){
+                listen();
+            }
         });
         condition = true;
         t.start();
@@ -58,7 +58,7 @@ public class SocketListener {
                             });
                         } catch (ClassNotFoundException e) {System.out.println(e.getMessage());}
                         break;
-                    case Protocol.LOG_IN:
+                    case Protocol.USER_LOGIN:
                         try{
                             Usuario usuario = (Usuario) ais.readObject();
                             SwingUtilities.invokeLater(new Runnable() {
@@ -66,7 +66,7 @@ public class SocketListener {
                             });
                         } catch (ClassNotFoundException e) {System.out.println(e.getMessage());}
                         break;
-                    case Protocol.LOG_OUT:
+                    case Protocol.USER_LOGOUT:
                         try{
                             Usuario usuario = (Usuario) ais.readObject();
                             SwingUtilities.invokeLater(new Runnable() {

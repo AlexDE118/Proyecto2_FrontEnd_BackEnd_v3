@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsuarioDAO {
+public class
+UsuarioDAO {
     Database db;
     public UsuarioDAO() {
         db = Database.instance();
@@ -16,12 +17,14 @@ public class UsuarioDAO {
     }
 
     public void create(Usuario usuario) throws Exception {
-        String sql = "insert into Usuario (id, clave, UserType)"
-                + " values (?, ?, ?)";
+        String sql = "insert into Usuario (id, clave, UserType, message, logged)"
+                + " values (?, ?, ?, ?, ?)";
         PreparedStatement stm = db.preparedStatement(sql);
         stm.setString(1, usuario.getId());
         stm.setString(2, usuario.getClave());
         stm.setString(3, usuario.getUserType());
+        stm.setString(4, "");
+        stm.setBoolean(5, false);
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("No se pudo registrar el usuario");
@@ -41,6 +44,29 @@ public class UsuarioDAO {
         }else {
             throw new Exception("No se encontro el usuario");
         }
+    }
+
+    public void updateLogged(Usuario usuario) throws Exception {
+        String sql = "update Usuario set logged = ? where id = ?";
+        PreparedStatement stm = db.preparedStatement(sql);
+        stm.setBoolean(1, usuario.getLogged());
+        stm.setString(2, usuario.getId());
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("UsuarioDAO - No se pudo logear");
+        }
+    }
+
+    public void updateMessage(Usuario usuario) throws Exception {
+        String sql = "update Usuario set message = ? where id = ?";
+        PreparedStatement stm = db.preparedStatement(sql);
+        stm.setString(1, usuario.getMessage());
+        stm.setString(2, usuario.getId());
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("UsuarioDAO - No se pudo agregar el mensaje");
+        }
+
     }
 
     public void update(Usuario usuario) throws Exception {

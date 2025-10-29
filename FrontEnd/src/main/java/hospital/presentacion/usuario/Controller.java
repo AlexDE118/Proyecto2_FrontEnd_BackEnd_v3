@@ -1,6 +1,5 @@
 package hospital.presentacion.usuario;
 
-import hospital.Application;
 import hospital.logic.Service;
 import hospital.logic.Usuario;
 import hospital.presentacion.ThreadListener;
@@ -8,7 +7,6 @@ import hospital.presentacion.ThreadListener;
 import java.util.List;
 
 public class Controller implements ThreadListener {
-
     View view;
     Model model;
 
@@ -21,80 +19,70 @@ public class Controller implements ThreadListener {
         view.setController(this);
         view.setModel(model);
         model.addPropertyChangeListener(view);
-
+        List<Usuario> usuarios = Service.instance().loadListaUsuarios();
+        model.setUsuarios(usuarios);
+        model.loadLoggedUsersFromList();
         try{
             socketListener = new SocketListener(this, (Service.instance().getSid()));
             socketListener.start();
-        } catch (Exception e) { }
-
-        getLoggedUsers();
+            System.out.println("Usuario - Controller Servidor Iniciado");
+        } catch (Exception e) {
+            System.err.println("Usuario Controller - Error al iniciar el servidor "+ e.getMessage());
+        }
     }
 
     @Override
-    public void deliver_message(String message) {
-        try{ search(new Usuario());} catch (Exception e) { }
-        System.out.println(message);
+    public void deliver_message(String message){
+
     }
 
     @Override
-    public void deliver_login(Usuario usuario) {
-        try{
-            System.out.println("User logged in notification received: " + usuario.getId());
-            // Add to logged users list
-            model.addLoggedUser(usuario);
-
-            // Also add to general usuarios list if not already there
-            if (!model.getUsuarios().contains(usuario)) {
-                model.addUsuario(usuario);
+    public void deliver_login(Usuario usuario){
+        try {
+            // Update the user's logged status in the model
+            List<Usuario> allUsers = model.getUsuarios();
+            for (Usuario user : allUsers) {
+                if (user.getId().equals(usuario.getId())) {
+                    user.setLogged(true);
+                    break;
+                }
             }
 
-            System.out.println("Logged users count: " + model.getLoggedUsers().size());
+            // Refresh the logged users list
+            model.loadLoggedUsersFromList();
+
+            System.out.println("Usuario " + usuario.getId() + " ha iniciado sesión");
 
         } catch (Exception e) {
-            System.out.println("Error adding logged user: " + e.getMessage());
+            System.err.println("Error en deliver_login: " + e.getMessage());
         }
     }
 
     @Override
-    public void deliver_logout(Usuario usuario) {
-        try{
-            System.out.println("User logged out notification received: " + usuario.getId());
-            // Remove from logged users list
-            model.removeLoggedUser(usuario);
+    public void deliver_logout(Usuario usuario){
+        try {
+            // Update the user's logged status in the model
+            List<Usuario> allUsers = model.getUsuarios();
+            for (Usuario user : allUsers) {
+                if (user.getId().equals(usuario.getId())) {
+                    user.setLogged(false);
+                    break;
+                }
+            }
 
-            // Also remove from general usuarios list
-            List<Usuario> currentUsers = model.getUsuarios();
-            currentUsers.removeIf(user -> user.getId().equals(usuario.getId()));
-            model.setUsuarios(currentUsers);
+            // Refresh the logged users list
+            model.loadLoggedUsersFromList();
 
-            System.out.println("Logged users count after logout: " + model.getLoggedUsers().size());
+            System.out.println("Usuario " + usuario.getId() + " ha cerrado sesión");
 
         } catch (Exception e) {
-            System.out.println("ERROR al desconectar usuario: " + usuario.getId());
+            System.err.println("Error en deliver_logout: " + e.getMessage());
         }
     }
 
-    public void search(Usuario usuario) throws Exception {
-        model.setFilter(usuario);
-        List<Usuario> rows = Service.instance().searchUsers(model.getFilter());
-        model.setMode(Application.MODE_CREATE);
-        model.setUsuarios(rows);
+    public List<Usuario> loadListaUsuariosLogeados(){
+        return model.getUsuarios();
     }
 
-    public void loadUsuarios(){
-        model.setUsuarios(Service.instance().loadListaUsuarios());
-    }
-
-    public void addUsuario(Usuario usuario) {
-        Service.instance().addUsuario(usuario);
-    }
-
-    public void deleteUsuario(Usuario usuario) {
-        Service.instance().removeUsuario(usuario);
-    }
-
-    public List<Usuario> getLoggedUsers() {
-        return model.getLoggedUsers();
-    }
 
 }

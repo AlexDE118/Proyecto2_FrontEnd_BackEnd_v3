@@ -27,7 +27,8 @@ public class TableModel extends AbstractTableModel<Usuario> implements javax.swi
             case ID:
                 return usuario.getId();
             case MENSAJES:
-                return usuario.getMensajes().size();
+                if(usuario.getMessage() != "" && usuario.getMessage() != null) return "X";
+                else return "";
             default:
                 return null;
         }

@@ -77,26 +77,6 @@ public class Server {
         }
     }
 
-    public void broadcastLogin(Usuario usuario) {
-        synchronized(workers) {
-            for(Worker worker : workers) {
-                if(worker.as != null) { // Only send to clients with async connections
-                    worker.deliver_login(usuario);
-                }
-            }
-        }
-    }
-
-    public void broadcastLogout(Usuario usuario) {
-        synchronized(workers) {
-            for(Worker worker : workers) {
-                if(worker.as != null) {
-                    worker.deliver_logout(usuario);
-                }
-            }
-        }
-    }
-
     public void remove(Worker worker) {
         workers.remove(worker);
         System.out.println("Quedan: " + workers.size());

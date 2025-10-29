@@ -1,7 +1,7 @@
 package hospital.presentacion.login;
 
-import hospital.logic.Usuario;
 import hospital.logic.Service;
+import hospital.logic.Usuario;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -30,38 +30,41 @@ public class View implements PropertyChangeListener {
     public View() {
 
 
-//        logInButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                Usuario usuario = new Usuario();
-//                usuario.setId(id_textField.getText());
-//                usuario.setClave(passwordField1.getText());
-//                try {
-//                    Service.instance().readUsuario(usuario);
-//                    model.setCurrent(usuario);
-//
-//                } catch (Exception ex) {
-//                    JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
-//                }
-//            }
-//        });
         logInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Usuario usuario = new Usuario();
                 usuario.setId(id_textField.getText());
-                usuario.setClave(new String(passwordField1.getPassword()));
+                usuario.setClave(passwordField1.getText());
                 try {
+                    // This now properly calls the backend login which updates logged status
                     Usuario loggedUser = controller.login(usuario);
                     model.setCurrent(loggedUser);
 
-                    JOptionPane.showMessageDialog(loginJPanel, "Login exitoso: " + loggedUser.getId());
+                    // Optional: Show success message
+                    JOptionPane.showMessageDialog(loginJPanel, "Login exitoso para: " + loggedUser.getId());
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
                 }
             }
+//            public void actionPerformed(ActionEvent e) {
+//                Usuario usuario = new Usuario();
+//                usuario.setId(id_textField.getText());
+//                usuario.setClave(passwordField1.getText());
+//                try {
+//                    Usuario loggedUser = controller.login(usuario);
+//                    model.setCurrent(loggedUser);
+//
+////                    Service.instance().readUsuario(usuario);
+////                    model.setCurrent(usuario);
+//
+//                } catch (Exception ex) {
+//                    JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
+//                }
+//            }
         });
+
 
         cambiarClaveButton.addActionListener(new ActionListener() {
             @Override

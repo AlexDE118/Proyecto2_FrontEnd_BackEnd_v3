@@ -1,8 +1,7 @@
 package hospital;
 
-import hospital.logic.Protocol;
-import hospital.logic.Usuario;
 import hospital.logic.Service;
+import hospital.logic.Usuario;
 import hospital.presentacion.Sesion;
 import hospital.presentacion.dashboard.View2;
 import hospital.presentacion.doctor.Controller;
@@ -15,8 +14,6 @@ import hospital.presentacion.medicamentos.View3;
 import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 public class Application {
     public static void main(String[] args) {
@@ -71,7 +68,7 @@ public class Application {
         hospital.presentacion.historico.Model historicoModel = new hospital.presentacion.historico.Model();
         hospital.presentacion.historico.Controller historicoController = new hospital.presentacion.historico.Controller(historicoView,historicoModel);
 
-        //USUARIO
+        //USUARIOS
         hospital.presentacion.usuario.View usuarioView = new hospital.presentacion.usuario.View();
         hospital.presentacion.usuario.Model usuarioModel = new hospital.presentacion.usuario.Model();
         hospital.presentacion.usuario.Controller usuarioController = new hospital.presentacion.usuario.Controller(usuarioView, usuarioModel);
@@ -96,7 +93,7 @@ public class Application {
         tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
         tabbedPane.addTab("Historico",historicoView.getHistoricoJPanel());
         tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
-        tabbedPane.addTab("Usuarios",usuarioView.getJPanel_usuario());
+        tabbedPane.addTab("Usuarios", usuarioView.getJPanel_usuario());
 
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
@@ -175,44 +172,52 @@ public class Application {
 
 
         loginDialog.setVisible(true);
+
         window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 try {
-                    // Notify server that user is logging out
-                    notifyServerLogout(Sesion.getUsuario());
-                } catch (Exception ex) {
-                    // Ignore errors during logout notification
-                }
-                Service.instance().stop();
-            }
+                    // Get the current logged-in user from Sesion
+                    Usuario currentUser = Sesion.getUsuario();
+                    if (currentUser != null && currentUser.getId() != null && !currentUser.getId().isEmpty()) {
+                        System.out.println("Cerrando sesión automáticamente para: " + currentUser.getId());
 
-            private void notifyServerLogout(Usuario usuario) {
-                try {
-                    Socket socket = new Socket(hospital.logic.Protocol.SERVER, hospital.logic.Protocol.PORT);
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                    out.writeInt(Protocol.LOG_OUT);
-                    out.writeObject(usuario);
-                    out.flush();
-                    out.close();
-                    socket.close();
-                } catch (Exception e) {
-                    System.err.println("Error notifying server of logout: " + e.getMessage());
+                        // Call logout to set logged = false in backend
+                        Service.instance().logout(currentUser);
+
+                        System.out.println("Logout automático exitoso para: " + currentUser.getId());
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Error durante logout automático: " + ex.getMessage());
+                    // Continue with shutdown even if logout fails
+                } finally {
+                    // Always stop the service
+                    Service.instance().stop();
                 }
             }
         });
 
-
 //        window.addWindowListener(new WindowAdapter() {
 //            @Override
 //            public void windowClosing(WindowEvent e) {
-//                Service.instance().stop();
+//                try {
+//                    // Get the current logged-in user from Sesion
+//                    Usuario currentUser = Sesion.getUsuario();
+//                    if (currentUser != null) {
+//                        // Call logout to set logged = false in backend
+//                        Service.instance().logout(currentUser);
+//                        System.out.println("Usuario " + currentUser.getId() + " ha cerrado sesión automáticamente");
+//                    }
+//                } catch (Exception ex) {
+//                    System.err.println("Error durante logout automático: " + ex.getMessage());
+//                } finally {
+//                    // Always stop the service
+//                    Service.instance().stop();
+//                }
+//                //Service.instance().stop();
 //            }
 //        });
     }
-
-    public final static int MODE_CREATE = 1;
-    //public final static int MODE_EDIT = 2;
 }
 
 

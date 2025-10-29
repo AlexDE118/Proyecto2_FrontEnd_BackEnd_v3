@@ -48,7 +48,7 @@ public class Worker {
     public void deliver_message(String message) {
         if(as != null){
             try{
-                aos.writeInt(Protocol.DELIVER_MESSAGE);
+                aos.writeInt(999 /*Implementar Protocol.DELIVER_MESSAGE*/);
                 aos.writeObject(message);
                 aos.flush();
             } catch (Exception e) { }
@@ -74,30 +74,6 @@ public class Worker {
     public void stop(){
         continuar = false;
         System.out.println("Conexion cerrada...");
-    }
-
-    public void deliver_login(Usuario usuario) {
-        if(as != null){
-            try{
-                aos.writeInt(Protocol.LOG_IN);
-                aos.writeObject(usuario);
-                aos.flush();
-            } catch (Exception e) {
-                System.out.println("Error delivering login: " + e.getMessage());
-            }
-        }
-    }
-
-    public void deliver_logout(Usuario usuario) {
-        if(as != null){
-            try{
-                aos.writeInt(Protocol.LOG_OUT);
-                aos.writeObject(usuario);
-                aos.flush();
-            } catch (Exception e) {
-                System.out.println("Error delivering logout: " + e.getMessage());
-            }
-        }
     }
 
     public void listen() {
@@ -529,16 +505,6 @@ public class Worker {
                             System.out.println(e.getMessage());
                         }
                         break;
-                    case Protocol.USER_SEARCH:
-                        try{
-                            Usuario usuario = service.searchUser((Usuario) is.readObject());
-                            os.writeInt(Protocol.ERROR_NO_ERROR);
-                            os.writeObject(usuario);
-                        } catch (Exception e){
-                            os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
-                        }
-                        break;
                     case Protocol.USER_UPDATE_PASSWORD:
                         try{
                             service.updateClave((Usuario) is.readObject());
@@ -558,34 +524,47 @@ public class Worker {
                             System.out.println(e.getMessage());
                         }
                         break;
-                    case Protocol.DELIVER_MESSAGE:
+                    case Protocol.USER_LOGIN:
                         try{
-                            //service.sendMessage();
+                            Usuario usuario  = (Usuario) is.readObject();
+                            // Use the login method which validates credentials and updates logged status
+                            Usuario loggedUser = service.login(usuario);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
-                        } catch (Exception e) {
-                            os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case Protocol.LOG_IN:
-                        try{
-                            Usuario usuario = (Usuario) is.readObject();
-                            srv.broadcastLogin(usuario);
-                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeObject(loggedUser);
+                            System.out.println(loggedUser.getId() + " " + loggedUser.getUserType() +  " " + loggedUser.getLogged());
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
+                            os.writeObject(e.getMessage()); // Send error message back
                             System.out.println(e.getMessage());
                         }
                         break;
-                    case Protocol.LOG_OUT:
-                        try {
+                    case Protocol.USER_LOGOUT:
+                        try{
                             Usuario usuario = (Usuario) is.readObject();
-                            srv.broadcastLogout(usuario);
+                            // Use the logout method instead of updateLogin
+                            service.logout(usuario);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
-                        } catch (Exception e) {
+                            os.writeObject(usuario);
+                            System.out.println("USER_LOGOUT - Usuario " + usuario.getId() + " ha cerrado sesión - Logged: " + usuario.getLogged());
+                        } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
+                            os.writeObject(e.getMessage()); // Send error message back
+                            System.out.println("Error en USER_LOGOUT: " + e.getMessage());
                         }
+//                        try{
+//                            Usuario usuario  = (Usuario) is.readObject();
+//                            usuario.setLogged(false);
+//                            service.updateLogin(usuario);
+//                            os.writeInt(Protocol.ERROR_NO_ERROR);
+//                            os.writeObject(usuario);
+//                            System.out.println(usuario.getId() + " " + usuario.getUserType() +  " " + usuario.getLogged());
+//                        } catch (Exception e){
+//                            os.writeInt(Protocol.ERROR_ERROR);
+//                            System.out.println(e.getMessage());
+//                        }
+                        break;
+                    case Protocol.DELIVER_MESSAGE:
+
                         break;
                 }
                 os.flush();

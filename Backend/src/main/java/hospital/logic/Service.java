@@ -333,42 +333,14 @@ public class Service {
         }
     }
 
-    public void removeUsuario(Usuario usuario) {
-        try{
-            usuarioDAO.delete(usuario);
-        } catch (Exception e) {
-            System.out.println("Error al eliminar usuario: " + e.getMessage());
-        }
-    }
-
     public Usuario searchUserID(String id) throws Exception {
        Usuario usuario = new Usuario();
         try{
-        //    usuario = usuarioDAO.read(id);
+            //usuario = usuarioDAO.read(id);
        }  catch (Exception e) {
 
        }
         return usuario;
-    }
-
-    public Usuario searchUser(Usuario usuario) throws Exception {
-        Usuario result = new Usuario();
-        try{
-            usuario = usuarioDAO.read(usuario);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
-
-    public List<Usuario> searchUsers(Usuario usuario){
-        return usuarioDAO.findByID(usuario);
-    }
-
-    public void sendMessage(Usuario usuario, String message) throws Exception {
-        String msg = "["+usuario.getId()+ "]: " + message;
-        usuario.getMensajes().add(msg);
-        usuarioDAO.update(usuario);
     }
 
     public void updateClave(Usuario usuario) throws Exception {
@@ -379,6 +351,42 @@ public class Service {
             stop();
         } else {
             throw new Exception("Usuario no encontrado para actualizar clave");
+        }
+    }
+
+    public Usuario login(Usuario usuario) throws Exception {
+        Usuario userFromDB = usuarioDAO.read(usuario);
+        if (!userFromDB.getClave().equals(usuario.getClave())) {
+            throw new Exception("Clave incorrecta");
+        }
+        userFromDB.setLogged(true);
+        usuarioDAO.updateLogged(userFromDB);
+        System.out.println("BACKEND - Login successful for: " + userFromDB.getId() + " - Logged: " + userFromDB.getLogged());
+
+        return userFromDB;
+    }
+
+    public void logout(Usuario usuario) throws Exception {
+        Usuario userFromDB = usuarioDAO.read(usuario);
+        if (userFromDB != null) {
+            userFromDB.setLogged(false);
+            usuarioDAO.updateLogged(userFromDB);
+            System.out.println("BACKEND - Logout successful for: " + userFromDB.getId() + " - Logged: " + userFromDB.getLogged());
+        } else {
+            throw new Exception("Usuario no encontrado para logout");
+        }
+    }
+
+    public void updateLogin(Usuario usuario) throws Exception {
+        usuarioDAO.updateLogged(usuario);
+    }
+
+    public void updateMessage(String message) throws Exception {
+        Usuario usuario = new Usuario();
+        try{
+            usuario.setLogged(true);
+        }  catch (Exception e) {
+            System.out.println("SERVICE BACK END: " + e.getMessage());
         }
     }
     //======================= END ======================//

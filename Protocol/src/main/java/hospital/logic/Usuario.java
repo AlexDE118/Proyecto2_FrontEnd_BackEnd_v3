@@ -1,26 +1,26 @@
 package hospital.logic;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Usuario implements Serializable {
     private String id;
     private String clave;
     private String userType;
-    private ArrayList<String> mensajes;
+    private String message;
+    private boolean logged;
 
     public Usuario() {
         this.id = "";
         this.clave = "";
         this.userType = "";
-        this.mensajes = new ArrayList<>();
+        this.message = "";
+        this.logged = false;
     }
 
     public Usuario(String id, String clave, String userType) {
         this.id = id;
         this.clave = clave;
         this.userType = userType;
-        this.mensajes = new ArrayList<>();
     }
 
     public String getId() {
@@ -47,12 +47,20 @@ public class Usuario implements Serializable {
         this.userType = userType;
     }
 
-    public ArrayList<String> getMensajes() {
-        return mensajes;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMensajes(ArrayList<String> mensajes) {
-        this.mensajes = mensajes;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean getLogged() {
+        return logged;
+    }
+
+    public void setLogged(boolean logged) {
+        this.logged = logged;
     }
 
 }
