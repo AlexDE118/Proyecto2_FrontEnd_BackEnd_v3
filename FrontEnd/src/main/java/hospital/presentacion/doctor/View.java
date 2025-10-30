@@ -34,7 +34,6 @@ public class View implements PropertyChangeListener {
 
     public View() {
 
-
         guardarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

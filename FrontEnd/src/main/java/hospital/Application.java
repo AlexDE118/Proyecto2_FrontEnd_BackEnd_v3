@@ -25,7 +25,9 @@ public class Application {
 
         // DOCTORES
         View doctorView = new View();
+        System.out.println(doctorView);
         Model doctorModel = new Model();
+        System.out.println(doctorModel);
         Controller controllerDoctor = new Controller(doctorView, doctorModel);
 
         // FARMACEUTAS
@@ -82,6 +84,7 @@ public class Application {
         window.setSize(1300, 500);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setContentPane(tabbedPane);
+        //window.add(tabbedPane);
 
         // AGREGAR TODOS LOS TABS
         tabbedPane.addTab("Doctores", doctorView.getMedicos_JPanel());

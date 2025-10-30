@@ -111,12 +111,16 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Hospital`.`Usuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Hospital`.`Usuario` (
-  `ID` VARCHAR(25) NOT NULL,
-  `clave` VARCHAR(45) NULL,
-  `userType` VARCHAR(45) NULL,
-  PRIMARY KEY (`ID`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `Hospital`.`Usuario`
+(
+    `ID`       VARCHAR(25) NOT NULL,
+    `clave`    VARCHAR(45) NULL,
+    `userType` VARCHAR(45) NULL,
+    `message`  VARCHAR(45) NULL,
+    `logged`   TINYINT     NULL,
+    PRIMARY KEY (`ID`)
+)
+    ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;
