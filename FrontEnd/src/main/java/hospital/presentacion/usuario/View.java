@@ -45,7 +45,10 @@ public class View implements PropertyChangeListener {
             public void actionPerformed(ActionEvent e) {
                 //model.getLoggedUsers();
                 System.out.println(model.getLoggedUsers());
-                System.out.println(model.getUsuarios());
+                System.out.println(model.getUsuarios().toString());
+                for(Usuario usuario : model.getUsuarios()){
+                    System.out.println(usuario.getLogged());
+                }
             }
         });
 

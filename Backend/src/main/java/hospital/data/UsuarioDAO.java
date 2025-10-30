@@ -133,6 +133,8 @@ UsuarioDAO {
             usuario.setId(rs.getString(alias + ".id"));
             usuario.setClave(rs.getString(alias + ".clave"));
             usuario.setUserType(rs.getString(alias  + ".userType"));
+            usuario.setMessage(rs.getString(alias + ".message"));
+            usuario.setLogged(rs.getBoolean(alias + ".logged"));
             return usuario;
         } catch (SQLException e) {
             return null;

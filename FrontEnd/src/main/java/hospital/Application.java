@@ -58,6 +58,11 @@ public class Application {
         hospital.presentacion.despacho.Model despachoModel = new hospital.presentacion.despacho.Model();
         hospital.presentacion.despacho.Controller controllerDespacho = new hospital.presentacion.despacho.Controller(despachoModel, despachoView);
 
+        //USUARIOS
+//        hospital.presentacion.usuario.View usuarioView1 = null;
+//        hospital.presentacion.usuario.Model usuarioModel1 = null;
+//        hospital.presentacion.usuario.Controller usuarioController = null;
+
         // LOGIN
         hospital.presentacion.login.View loginView = new hospital.presentacion.login.View();
         hospital.presentacion.login.Model loginModel = new hospital.presentacion.login.Model();
@@ -67,11 +72,6 @@ public class Application {
         hospital.presentacion.historico.View historicoView = new hospital.presentacion.historico.View();
         hospital.presentacion.historico.Model historicoModel = new hospital.presentacion.historico.Model();
         hospital.presentacion.historico.Controller historicoController = new hospital.presentacion.historico.Controller(historicoView,historicoModel);
-
-        //USUARIOS
-        hospital.presentacion.usuario.View usuarioView = new hospital.presentacion.usuario.View();
-        hospital.presentacion.usuario.Model usuarioModel = new hospital.presentacion.usuario.Model();
-        hospital.presentacion.usuario.Controller usuarioController = new hospital.presentacion.usuario.Controller(usuarioView, usuarioModel);
 
         // ACERCA DE
         hospital.presentacion.AcercaDe.View acercaDeView = new hospital.presentacion.AcercaDe.View();
@@ -93,7 +93,6 @@ public class Application {
         tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
         tabbedPane.addTab("Historico",historicoView.getHistoricoJPanel());
         tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
-        tabbedPane.addTab("Usuarios", usuarioView.getJPanel_usuario());
 
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
@@ -114,25 +113,20 @@ public class Application {
             String idIngresado = loginView.getIdTextField().getText();
             String claveIngresada = new String(loginView.getPasswordField1().getText());
 
-
-
             Usuario u = new Usuario();
             u.setId(idIngresado);
             u.setClave(claveIngresada);
 
             try {
-
                 Usuario usuarioReal = loginController.login(u);
-
-
                 Sesion.setUsuario(usuarioReal);
-
-
                 String tipo = Sesion.getUsuario().getUserType();
 
+                hospital.presentacion.usuario.View usuarioView = new hospital.presentacion.usuario.View();
+                hospital.presentacion.usuario.Model usuarioModel = new hospital.presentacion.usuario.Model();
+                hospital.presentacion.usuario.Controller usuarioController = new hospital.presentacion.usuario.Controller(usuarioView, usuarioModel);
 
-
-
+                tabbedPane.addTab("Usuarios", usuarioView.getJPanel_usuario());
 
                 switch (tipo) {
                     case "Doctor":
@@ -140,12 +134,14 @@ public class Application {
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     case "Farmaceuta":
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Despacho"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     case "Admin":
                         tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Doctores"), true);

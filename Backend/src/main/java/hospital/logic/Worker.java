@@ -527,25 +527,34 @@ public class Worker {
                     case Protocol.USER_LOGIN:
                         try{
                             Usuario usuario  = (Usuario) is.readObject();
-                            // Use the login method which validates credentials and updates logged status
                             Usuario loggedUser = service.login(usuario);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                             os.writeObject(loggedUser);
                             System.out.println(loggedUser.getId() + " " + loggedUser.getUserType() +  " " + loggedUser.getLogged());
+
+                            // Make sure we have a complete user object for broadcasting
+                            Usuario broadcastUser = service.readUsuario(loggedUser);
+                            broadcastUser.setLogged(true); // Ensure logged status is true
+
+                            broadcastUserLogin(broadcastUser);
+                            updateCurrentUserList(broadcastUser, true);
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
-                            os.writeObject(e.getMessage()); // Send error message back
-                            System.out.println(e.getMessage());
+                            os.writeObject(e.getMessage());
+                            System.out.println("Error in USER_LOGIN: " + e.getMessage());
+                            e.printStackTrace();
                         }
                         break;
                     case Protocol.USER_LOGOUT:
                         try{
                             Usuario usuario = (Usuario) is.readObject();
-                            // Use the logout method instead of updateLogin
                             service.logout(usuario);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                             os.writeObject(usuario);
                             System.out.println("USER_LOGOUT - Usuario " + usuario.getId() + " ha cerrado sesión - Logged: " + usuario.getLogged());
+
+                            broadcastUserLogout(usuario);
+                            updateCurrentUserList(usuario, false);
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
                             os.writeObject(e.getMessage()); // Send error message back
@@ -572,6 +581,50 @@ public class Worker {
                 System.out.println(ex);
                 stop();
             }
+        }
+    }
+
+    private void broadcastUserLogin(Usuario usuario) {
+        for (Worker worker : srv.workers) {
+            if (worker != this && worker.as != null) { // Don't send to self, only to async clients
+                try {
+                    worker.aos.writeInt(Protocol.USER_LOGIN);
+                    worker.aos.writeObject(usuario);
+                    worker.aos.flush();
+                } catch (Exception e) {
+                    System.out.println("Error broadcasting login to worker: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void broadcastUserLogout(Usuario usuario) {
+        for (Worker worker : srv.workers) {
+            if (worker != this && worker.as != null) { // Don't send to self, only to async clients
+                try {
+                    worker.aos.writeInt(Protocol.USER_LOGOUT);
+                    worker.aos.writeObject(usuario);
+                    worker.aos.flush();
+                } catch (Exception e) {
+                    System.out.println("Error broadcasting logout to worker: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    private void updateCurrentUserList(Usuario usuario, boolean logged) {
+        try {
+            // Update the user's own list in the service
+            List<Usuario> allUsers = service.loadListaUsuarios();
+            for (Usuario user : allUsers) {
+                if (user.getId().equals(usuario.getId())) {
+                    user.setLogged(logged);
+                    break;
+                }
+            }
+            System.out.println("Updated current user " + usuario.getId() + " to logged=" + logged + " in own list");
+        } catch (Exception e) {
+            System.out.println("Error updating current user list: " + e.getMessage());
         }
     }
 

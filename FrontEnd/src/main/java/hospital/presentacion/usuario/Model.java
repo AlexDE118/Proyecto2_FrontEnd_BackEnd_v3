@@ -26,9 +26,9 @@ public Model() {
 public void init() {
     filter = new Usuario();
     current = new Usuario();
-    List<Usuario> rows= new ArrayList<>();
-    this.setUsuarios(rows);
-    //mode = Application.MODE_CREATE;
+//    List<Usuario> rows= new ArrayList<>();
+//    this.setUsuarios(rows);
+//    mode = Application.MODE_CREATE;
 }
 
 @Override
@@ -54,14 +54,28 @@ public void setLoggedUsers(List<Usuario> loggedUsers) {
             for (Usuario usuario : usuarios) {
                 if (usuario.getLogged()) {
                     logged.add(usuario);
+                    System.out.println("MODEL DEBUG: Adding to logged list - " + usuario.getId() + " (logged: " + usuario.getLogged() + ")");
                 }
             }
             this.setLoggedUsers(logged);
-            System.out.println("Loaded " + logged.size() + " logged users from " + usuarios.size() + " total users");
+            System.out.println("MODEL: Loaded " + logged.size() + " logged users from " + usuarios.size() + " total users");
         } else {
-            System.out.println("usuarios list is null in loadLoggedUsersFromList");
+            System.out.println("Model: usuarios list is null in loadLoggedUsersFromList");
         }
     }
+
+    public void updateUserLoggedStatus(Usuario usuario, boolean logged) {
+        for (Usuario user : usuarios) {
+            if (user.getId().equals(usuario.getId())) {
+                user.setLogged(logged);
+                break;
+            }
+        }
+        // Force refresh of logged users list
+        loadLoggedUsersFromList();
+    }
+
+
 
 //public void addLoggedUser(Usuario usuario) {
 //    if (!isUserLogged(usuario)) {

@@ -528,7 +528,7 @@ public class Service {
                 System.out.println("Usuario leído correctamente: " + u.getId() + " - Tipo: " + u.getUserType());
                 return u;
             } else {
-                System.out.println("⚠️ El backend devolvió un tipo inesperado: " + recibido.getClass().getName());
+                System.out.println("El backend devolvió un tipo inesperado: " + recibido.getClass().getName());
                 throw new Exception("Tipo de objeto inesperado (" + recibido.getClass().getName() + ")");
             }
 
@@ -591,6 +591,8 @@ public class Service {
             throw new Exception("Error durante el login");
         }
     }
+
+
 
     public void logout(Usuario usuario) throws Exception {
         os.writeInt(Protocol.USER_LOGOUT);
