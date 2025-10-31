@@ -17,9 +17,6 @@ public class View implements PropertyChangeListener {
     private JButton logInButton;
     private JButton limpiarButton;
 
-
-
-
     public JPanel getLoginJPanel() {
         return loginJPanel;
     }
@@ -42,8 +39,7 @@ public class View implements PropertyChangeListener {
                     model.setCurrent(loggedUser);
 
                     // Optional: Show success message
-                    JOptionPane.showMessageDialog(loginJPanel, "Login exitoso para: " + loggedUser.getId());
-
+                    //JOptionPane.showMessageDialog(loginJPanel, "Login exitoso para: " + loggedUser.getId());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(loginJPanel, "Error: " + ex.getMessage());
                 }

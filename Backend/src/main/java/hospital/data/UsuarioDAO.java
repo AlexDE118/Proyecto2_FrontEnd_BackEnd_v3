@@ -58,7 +58,7 @@ UsuarioDAO {
         }
     }
 
-    public void updateMessage(Usuario usuario) throws Exception {
+    public void sendMessage(Usuario usuario) throws Exception {
         String sql = "update Usuario set message = ? where id = ?";
         PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, usuario.getMessage());

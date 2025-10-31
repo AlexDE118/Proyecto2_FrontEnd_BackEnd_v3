@@ -639,7 +639,23 @@ public class Service {
         }
     }
 
+    public void sendMessage(Usuario usuario) throws Exception {
+        os.writeInt(Protocol.DELIVER_MESSAGE);
+        os.writeObject(usuario);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
 
+        }
+    }
+
+    public void broadcastMessageStatusChange(Usuario usuario) throws Exception {
+        os.writeInt(Protocol.BROADCAST_MESSAGE_STATUS); // You'll need to add this constant
+        os.writeObject(usuario);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Message status broadcast sent for: " + usuario.getId());
+        }
+    }
 
     public void logout(Usuario usuario) throws Exception {
         os.writeInt(Protocol.USER_LOGOUT);

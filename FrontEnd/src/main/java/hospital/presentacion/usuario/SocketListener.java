@@ -52,11 +52,16 @@ public class SocketListener {
                 switch (method) {
                     case Protocol.DELIVER_MESSAGE:
                         try {
-                            String message = (String) ais.readObject();
+                            Usuario usuario = (Usuario) ais.readObject(); // Changed from String to Usuario
                             SwingUtilities.invokeLater(new Runnable() {
-                                public void run() { listener.deliver_message(message); }
+                                public void run() {
+                                    listener.deliver_message(usuario.getMessage());
+                                    listener.deliver_message_status_change(usuario);
+                                }
                             });
-                        } catch (ClassNotFoundException e) {System.out.println(e.getMessage());}
+                        } catch (ClassNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
                         break;
                     case Protocol.USER_LOGIN:
                         try{
@@ -73,6 +78,18 @@ public class SocketListener {
                                 public void run() { listener.deliver_logout(usuario); }
                             });
                         } catch (Exception e) {System.out.println(e.getMessage());}
+                        break;
+                    case Protocol.MESSAGE_STATUS_CHANGE:
+                        try {
+                            Usuario usuario = (Usuario) ais.readObject();
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    listener.deliver_message_status_change(usuario);
+                                }
+                            });
+                        } catch (ClassNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
                         break;
                 }
             } catch (IOException e) {

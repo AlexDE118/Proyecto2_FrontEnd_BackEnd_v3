@@ -76,6 +76,7 @@ public class Protocol {
     public static final int SYNC = 10;
     public static final int ASYNC=11;
     public static final int DELIVER_MESSAGE=20;
-
+    public static final int MESSAGE_STATUS_CHANGE = 1001;
+    public static final int BROADCAST_MESSAGE_STATUS = 1002;
     public static final int DISCONNECT=99;
 }

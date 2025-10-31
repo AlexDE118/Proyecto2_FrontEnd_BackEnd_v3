@@ -48,7 +48,7 @@ public class Worker {
     public void deliver_message(String message) {
         if(as != null){
             try{
-                aos.writeInt(999 /*Implementar Protocol.DELIVER_MESSAGE*/);
+                aos.writeInt(Protocol.DELIVER_MESSAGE);
                 aos.writeObject(message);
                 aos.flush();
             } catch (Exception e) { }
@@ -617,7 +617,24 @@ public class Worker {
 //                        }
                         break;
                     case Protocol.DELIVER_MESSAGE:
-
+                        try{
+                            Usuario usuario = (Usuario) is.readObject();
+                            service.sendMessage(usuario);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception e) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            os.writeObject(e.getMessage());
+                        }
+                        break;
+                    case Protocol.BROADCAST_MESSAGE_STATUS:
+                        try {
+                            Usuario usuario = (Usuario) is.readObject();
+                            broadcastMessageStatusChange(usuario);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                        } catch (Exception e) {
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println("Error broadcasting message status: " + e.getMessage());
+                        }
                         break;
                 }
                 os.flush();
@@ -669,6 +686,21 @@ public class Worker {
             System.out.println("Updated current user " + usuario.getId() + " to logged=" + logged + " in own list");
         } catch (Exception e) {
             System.out.println("Error updating current user list: " + e.getMessage());
+        }
+    }
+
+    private void broadcastMessageStatusChange(Usuario usuario) {
+        for (Worker worker : srv.workers) {
+            if (worker != this && worker.as != null) {
+                try {
+                    worker.aos.writeInt(Protocol.MESSAGE_STATUS_CHANGE);
+                    worker.aos.writeObject(usuario);
+                    worker.aos.flush();
+                    System.out.println("Broadcasted message status change for: " + usuario.getId());
+                } catch (Exception e) {
+                    System.out.println("Error broadcasting message status to worker: " + e.getMessage());
+                }
+            }
         }
     }
 
