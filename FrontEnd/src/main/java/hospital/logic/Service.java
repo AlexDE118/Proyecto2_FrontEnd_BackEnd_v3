@@ -394,15 +394,21 @@ public class Service {
     }
     //========================== Receta ==========================//
 
-    public void createReceta(Receta receta) throws Exception {
+    // En el cliente
+    public Receta createReceta(Receta receta) throws Exception {
         os.writeInt(Protocol.RECETA_CREATE);
         os.writeObject(receta);
         os.flush();
+
         if (is.readInt() == Protocol.ERROR_NO_ERROR) {
-            System.out.println("Receta creada");
+            int numeroGenerado = is.readInt(); // leer el número que devuelve el servidor
+            receta.setNumero(numeroGenerado);
+            return receta;
+        } else {
+            throw new Exception("Receta no existe");
         }
-        else throw new Exception("Receta no existe");
     }
+
 
     public List<Receta>  loadListaRecetas(){
         List<Receta> recetas = new ArrayList<>();

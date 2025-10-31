@@ -391,8 +391,10 @@ public class Worker {
                         try{
                             service.createPrescripcion((Prescripcion) is.readObject());
                             os.writeInt(Protocol.ERROR_NO_ERROR);
+
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
+                            e.printStackTrace();
                             System.out.println(e.getMessage());
                         }
                         break;
@@ -453,8 +455,44 @@ public class Worker {
                         }
                         break;
 
+                    //Recetas
+
+                    case Protocol.RECETA_CREATE:
+                        try{
+                            Receta r = (Receta) is.readObject();
+                            Receta creada = service.createReceta(r);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeInt(creada.getNumero());
+                        } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+
+
+                    case Protocol.RECETA_DELETE:
+                        try{
+                            System.out.println("PROTOCOL RECETA_DELETE: ");
+                        } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+
+                    case Protocol.RECETA_LOADALL:
+                        try{
+                            List<Receta> listaReceta = service.loadListaRecetas();
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeObject(listaReceta);
+                        } catch (Exception e){
+                            os.writeInt(Protocol.ERROR_ERROR);
+                            System.out.println(e.getMessage());
+                        }
+                        break;
+
 
                     //Usuarios
+
 
 
                     case Protocol.USER_ADD:

@@ -5,6 +5,7 @@ import hospital.logic.Receta;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class RecetaDAO {
     Database db;
@@ -13,26 +14,42 @@ public class RecetaDAO {
         db = Database.instance();
     }
 
-    public void create(Receta r) throws Exception {
-        String sql = "insert into Receta (numero,cantidad,duracion,indicaciones,medicamentos)"
-                +"values (?,?,?,?,?)";  
-        PreparedStatement stm = db.preparedStatement(sql);
-        //stm.setString(1,"0");
-        stm.setInt(2,r.getCantidad());
-        stm.setInt(3,r.getDuracion());
-        stm.setString(4,r.getIndicaciones());
-        stm.setString(5,r.getMedicamentos().getCodigo());
+    public Receta create(Receta r) throws Exception {
+        // INSERT
+        String sql = "INSERT INTO Receta (cantidad,duracion,indicaciones,medicamentos) VALUES (?,?,?,?)";
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        stm.setInt(1, r.getCantidad());
+        stm.setInt(2, r.getDuracion());
+        stm.setString(3, r.getIndicaciones());
+        stm.setString(4, r.getMedicamentos().getCodigo());
+
         int count = db.executeUpdate(stm);
-        if (count == 0) {
-            throw new Exception("Receta ya existe");
+        if (count == 0) throw new Exception("Receta no se pudo insertar");
+
+        // Obtener LAST_INSERT_ID con PreparedStatement
+        PreparedStatement stmId = db.preparedStatement("SELECT LAST_INSERT_ID() AS id",0);
+        ResultSet rs = db.executeQuery(stmId);
+        if (rs.next()) {
+            int generated = rs.getInt("id");
+            r.setNumero(generated);
+            System.out.println("DEBUG: ID generado = " + generated);
+        } else {
+            throw new Exception("No se pudo obtener el ID de la receta");
         }
+
+        return r;
     }
+
+
+
+
 
     public Receta read(int numero) throws Exception {
         String sql = "select * from Receta r"
                 + "inner join Medicamento m on r.medicamentos = m.id"
                 + "where r.numero=?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setInt(1, numero);
         ResultSet rs = db.executeQuery(stm);
         Receta r;

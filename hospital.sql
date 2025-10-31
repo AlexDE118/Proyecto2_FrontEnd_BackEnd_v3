@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `Hospital`.`Paciente` (
   `Telefono` VARCHAR(45) NULL,
   PRIMARY KEY (`ID`),
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC) VISIBLE)
+
 ENGINE = InnoDB;
 
 

@@ -231,13 +231,11 @@ public class Service {
     }
     //========================== Receta ==========================//
 
-    public void createReceta(Receta receta) {
-        try {
-            recetaDAO.create(receta);
-        }  catch (Exception e) {
-            System.out.println(e);
-        }
+    // Service
+    public Receta createReceta(Receta receta) throws Exception {
+        return recetaDAO.create(receta); // devuelve el objeto con numero actualizado
     }
+
 
     public List<Receta>  loadListaRecetas(){
         List<Receta> recetas = new ArrayList<>();

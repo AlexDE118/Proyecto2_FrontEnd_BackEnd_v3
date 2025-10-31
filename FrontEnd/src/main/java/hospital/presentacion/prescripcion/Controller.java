@@ -32,6 +32,12 @@ public class Controller {
         model.setPacientes(Service.instance().loadListaPacientes());
     }
 
+    public Receta createReceta(Receta receta) throws Exception {
+        return Service.instance().createReceta(receta); // ahora devuelve el objeto con numero
+    }
+
+
+
     public void clear(){
         model.setCurrent(new Prescripcion());
     }

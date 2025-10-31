@@ -3,9 +3,7 @@ package hospital.data;
 import hospital.logic.Prescripcion;
 import hospital.logic.Receta;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,27 +16,48 @@ public class PrescripcionDAO {
     }
 
     public void create(Prescripcion p) throws Exception {
-        String sql = "insert into Prescripcion (estado, fechaConfeccion, fechaRetiro, receta, paciente) "
-        + "values (?, ?, ?, ?, ?)";
-        PreparedStatement stm = db.preparedStatement(sql);
+        if (p.getReceta() == null || p.getReceta().isEmpty())
+            throw new Exception("No hay recetas asociadas a la prescripcion");
+
+        if (p.getPaciente() == null || p.getPaciente().getId() == null)
+            throw new Exception("Paciente inválido");
+
+        System.out.println("Prescripcion:");
+        System.out.println("Estado: " + p.getEstado());
+        System.out.println("FechaConfeccion: " + p.getFechaConfeccion());
+        System.out.println("FechaRetiro: " + p.getFechaRetiro());
+        System.out.println("Receta: " + (p.getReceta().isEmpty() ? "VACIA" : p.getReceta().getFirst().getNumero()));
+        System.out.println("Paciente: " + (p.getPaciente() == null ? "NULL" : p.getPaciente().getId()));
+
+
+
+        String sql = "INSERT INTO Prescripcion (estado, fechaConfeccion, fechaRetiro, receta, paciente) "
+                + "VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
         stm.setString(1, p.getEstado());
-        stm.setString(2,p.getFechaConfeccion().toString());
-        stm.setString(3,p.getFechaRetiro().toString());
-        stm.setInt(4,p.getReceta().get(0).getNumero());
+        stm.setDate(2, java.sql.Date.valueOf(p.getFechaConfeccion()));
+        stm.setDate(3, java.sql.Date.valueOf(p.getFechaRetiro()));
+
+        stm.setInt(4, p.getReceta().getFirst().getNumero());
         stm.setString(5, p.getPaciente().getId());
 
-        int count = db.executeUpdate(stm);
-        if (count == 0) {
-            throw new Exception("Error al insertar prescripcion en database");
+        try {
+            int count = db.executeUpdate(stm);
+            if(count == 0) throw new Exception("Error al insertar prescripcion en database");
+        } catch(SQLException e) {
+            e.printStackTrace();
         }
+
     }
+
 
     public Prescripcion read(String id) throws Exception {
         String sql = "select * from Prescripcion p "
                 + "inner join Paciente pac on p.paciente = pac.id "
                 + "inner join Receta r on p.receta = r.numero "
                 + "where p.id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, id);
         ResultSet rs = db.executeQuery(stm);
         Prescripcion p;
@@ -62,7 +81,7 @@ public class PrescripcionDAO {
 
     public void delete(Prescripcion p) throws Exception {
         String sql = "delete from Prescripcion p where p.id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1,p.getId());
     }
 
@@ -70,7 +89,7 @@ public class PrescripcionDAO {
         List<Prescripcion> resultado = new ArrayList<>();
         try{
             String sql = "SELECT * FROM prescripcion p where id = ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1,"%"+id+"%");
             ResultSet rs = stm.executeQuery();
             while(rs.next()){

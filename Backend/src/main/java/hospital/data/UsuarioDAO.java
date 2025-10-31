@@ -5,6 +5,7 @@ import hospital.logic.Usuario;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +20,7 @@ UsuarioDAO {
     public void create(Usuario usuario) throws Exception {
         String sql = "insert into Usuario (id, clave, UserType, message, logged)"
                 + " values (?, ?, ?, ?, ?)";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, usuario.getId());
         stm.setString(2, usuario.getClave());
         stm.setString(3, usuario.getUserType());
@@ -34,7 +35,7 @@ UsuarioDAO {
     public Usuario read(Usuario usuario) throws Exception {
         String sql = "select * from Usuario u "
                 + "where u.id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, usuario.getId());
         ResultSet rs = db.executeQuery(stm);
         Usuario u;
@@ -48,7 +49,7 @@ UsuarioDAO {
 
     public void updateLogged(Usuario usuario) throws Exception {
         String sql = "update Usuario set logged = ? where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setBoolean(1, usuario.getLogged());
         stm.setString(2, usuario.getId());
         int count = db.executeUpdate(stm);
@@ -59,7 +60,7 @@ UsuarioDAO {
 
     public void updateMessage(Usuario usuario) throws Exception {
         String sql = "update Usuario set message = ? where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, usuario.getMessage());
         stm.setString(2, usuario.getId());
         int count = db.executeUpdate(stm);
@@ -72,7 +73,7 @@ UsuarioDAO {
     public void update(Usuario usuario) throws Exception {
         String sql = "update Usuario set id = ?, clave = ?, UserType = ?"
                 + "where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, usuario.getId());
         stm.setString(2, usuario.getClave());
         stm.setString(3, usuario.getUserType());
@@ -87,7 +88,7 @@ UsuarioDAO {
 
     public void delete(Usuario usuario) throws Exception {
         String sql = "delete from Usuario where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1,usuario.getId());
         int count = db.executeUpdate(stm);
         if(count == 0) {
@@ -99,7 +100,7 @@ UsuarioDAO {
         List<Usuario> usuarios = new ArrayList<>();
         try{
             String sql = "select * from usuario u";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = db.executeQuery(stm);
             Usuario usuario;
             while(rs.next()){
@@ -114,7 +115,7 @@ UsuarioDAO {
         List<Usuario> usuarios = new ArrayList<>();
         try{
             String sql = "select * from usuario u where u.id = ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1,"%"+ filtro.getId() + "%");
             ResultSet rs = db.executeQuery(stm);
             Usuario usuario;

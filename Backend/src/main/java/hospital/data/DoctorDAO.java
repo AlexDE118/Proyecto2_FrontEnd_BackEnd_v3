@@ -5,6 +5,7 @@ import hospital.logic.Doctor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class DoctorDAO {
 //        System.out.println(doctor.getNombre());
 //        System.out.println(doctor.getEspecialidad());
 //        System.out.println(doctor.getClave());
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, doctor.getId());
         stm.setString(2, doctor.getNombre());
         stm.setString(3, doctor.getEspecialidad());
@@ -37,7 +38,7 @@ public class DoctorDAO {
 
     public Doctor read(String id) throws Exception {
         String sql = "select * from doctor d where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, id);
         ResultSet rs = db.executeQuery(stm);
         Doctor doctor;
@@ -50,7 +51,7 @@ public class DoctorDAO {
 
     public void update(Doctor doctor) throws Exception {
         String sql = "update doctor set nombre = ?, especialidad = ?, clave = ? where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
         stm.setString(1, doctor.getNombre());
         stm.setString(2, doctor.getEspecialidad());
@@ -64,7 +65,7 @@ public class DoctorDAO {
 
     public void delete(String id) throws Exception {
         String sql = "delete from doctor where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, id);
         int count = db.executeUpdate(stm);
         if(count == 0)
@@ -75,7 +76,7 @@ public class DoctorDAO {
         List<Doctor> doctors = new ArrayList<>();
         try {
             String sql = "select * from doctor d";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = db.executeQuery(stm);
             Doctor doctor;
             while (rs.next()) {
@@ -90,7 +91,7 @@ public class DoctorDAO {
         List<Doctor> doctors = new ArrayList<>();
         try {
             String sql = "select * from doctor d where d.nombre like ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+filtro+"%");
             ResultSet rs = db.executeQuery(stm);
             Doctor doctor;
@@ -106,7 +107,7 @@ public class DoctorDAO {
         List<Doctor> doctors = new ArrayList<>();
         try {
             String sql = "select * from doctor d where d.id like ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+filtro+"%");
             ResultSet rs = db.executeQuery(stm);
             Doctor doctor;

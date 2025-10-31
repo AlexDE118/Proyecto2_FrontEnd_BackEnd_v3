@@ -5,6 +5,7 @@ import hospital.logic.Paciente;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PacienteDAO {
     public void create(Paciente paciente) throws Exception {
         try {
             String sql = "INSERT INTO paciente (ID, Nombre, Telefono) VALUES (?, ?, ?)";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, paciente.getId());
             stm.setString(2, paciente.getNombre());
             stm.setString(3, paciente.getNumeroTelefono());
@@ -51,7 +52,7 @@ public class PacienteDAO {
     public Paciente read(String id) throws Exception {
         String sql = "SELECT * FROM PACIENTE P "
                 + "WHERE id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, id);
         ResultSet rs = db.executeQuery(stm);
         Paciente paciente;
@@ -66,7 +67,7 @@ public class PacienteDAO {
 
     public void update(Paciente paciente) throws Exception {
         String sql =  "update Paciente set nombre=?, telefono=? where id=?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, paciente.getNombre());
         stm.setString(2, paciente.getNumeroTelefono());
         stm.setString(3, paciente.getId());
@@ -78,7 +79,7 @@ public class PacienteDAO {
 
     public void delete(Paciente p) throws Exception {
         String sql = "DELETE FROM PACIENTE WHERE id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, p.getId());
         int count = db.executeUpdate(stm);
         if (count == 0){
@@ -91,7 +92,7 @@ public class PacienteDAO {
         List<Paciente> resultado = new ArrayList();
         try {
             String sql = "select * from paciente p";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ResultSet rs = db.executeQuery(stm);
             Paciente p;
             while (rs.next()){
@@ -107,7 +108,7 @@ public class PacienteDAO {
         List<Paciente> resultado = new ArrayList<Paciente>();
         try{
             String sql = "SELECT * FROM PACIENTE P WHERE P.NOMBRE LIKE ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+paciente.getNombre()+"%");
             ResultSet rs = db.executeQuery(stm);
             Paciente p;
@@ -123,7 +124,7 @@ public class PacienteDAO {
         List<Paciente> resultado = new ArrayList<Paciente>();
         try{
             String sql = "SELECT * FROM PACIENTE P WHERE p.id like ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+paciente.getId()+"%");
             ResultSet rs = db.executeQuery(stm);
             Paciente p;

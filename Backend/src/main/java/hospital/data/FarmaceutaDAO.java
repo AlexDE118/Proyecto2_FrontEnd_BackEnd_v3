@@ -5,6 +5,7 @@ import hospital.logic.Farmaceuta;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class FarmaceutaDAO {
     public void create(Farmaceuta farmaceuta) throws Exception {
         String sql = "insert into Farmaceuta (id, nombre, clave)"
                 + "values (?, ?, ?)" ;
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, farmaceuta.getId());
         stm.setString(2, farmaceuta.getNombre());
         stm.setString(3, farmaceuta.getClave());
@@ -30,7 +31,7 @@ public class FarmaceutaDAO {
 
     public Farmaceuta read(String id) throws Exception {
         String sql = "select * from Farmaceuta f where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, id);
         ResultSet rs = stm.executeQuery();
         Farmaceuta farmaceuta;
@@ -45,7 +46,7 @@ public class FarmaceutaDAO {
 
     public void update(Farmaceuta farmaceuta) throws Exception {
         String sql = "update Farmaceuta set nombre = ?, clave = ? where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, farmaceuta.getNombre());
         stm.setString(2, farmaceuta.getClave());
         stm.setString(3, farmaceuta.getId());
@@ -57,7 +58,7 @@ public class FarmaceutaDAO {
 
     public void delete(Farmaceuta farmaceuta) throws Exception {
         String sql = "delete from Farmaceuta where id = ?";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1, farmaceuta.getId());
         int count = db.executeUpdate(stm);
         if (count == 0) {
@@ -67,7 +68,7 @@ public class FarmaceutaDAO {
 
     public List<Farmaceuta> findAll() throws Exception {
         String sql = "select * from Farmaceuta f";
-        PreparedStatement stm = db.preparedStatement(sql);
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ResultSet rs = stm.executeQuery();
         List<Farmaceuta> farmaceutas = new ArrayList<>();
         while (rs.next()) {
@@ -81,7 +82,7 @@ public class FarmaceutaDAO {
         List<Farmaceuta> farmaceutas = new ArrayList<>();
         try {
             String sql = "select * from Farmaceuta f where f.id = ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+ filtro + "%");
             ResultSet rs = stm.executeQuery();
             Farmaceuta farmaceuta;
@@ -97,7 +98,7 @@ public class FarmaceutaDAO {
         List<Farmaceuta> farmaceutas = new ArrayList<>();
         try {
             String sql = "select * from Farmaceuta f where f.nombre = ?";
-            PreparedStatement stm = db.preparedStatement(sql);
+            PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stm.setString(1, "%"+ filtro + "%");
             ResultSet rs = stm.executeQuery();
             Farmaceuta farmaceuta;

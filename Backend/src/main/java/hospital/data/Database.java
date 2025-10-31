@@ -1,9 +1,5 @@
 package hospital.data;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
 import java.sql.*;
 import java.util.Properties;
 
@@ -57,11 +53,12 @@ public class Database {
     }
 
 
-    public PreparedStatement preparedStatement(String statement) throws SQLException {
+    public PreparedStatement preparedStatement(String statement, int returnGeneratedKeys) throws SQLException {
         System.out.print("STM:" + statement);
         System.out.println("CNX:" + cnx);
-        return cnx.prepareStatement(statement);
+        return cnx.prepareStatement(statement, returnGeneratedKeys);
     }
+
 
     public int executeUpdate(PreparedStatement statement) throws SQLException {
         try{

@@ -50,27 +50,36 @@ public class View extends JDialog implements PropertyChangeListener {
         OKButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if(medicamentosTable.getSelectedRow() >= 0){
-                    //
                     Receta receta = new Receta();
-                    try{
+                    try {
+                        // Asignar los datos de la receta desde la UI
                         receta.setMedicamentos(model.getMedicamentoCurrent());
-                        //System.out.println(model.getMedicamentoCurrent());
                         receta.setCantidad(Integer.parseInt(cantidad_textField.getText()));
                         receta.setDuracion(Integer.parseInt(duracionDias_textField.getText()));
                         receta.setIndicaciones(indicaciones_textField.getText());
+
+                        // Guardar en la BD y obtener el número generado
+                        receta = controller.createReceta(receta); // ahora receta.getNumero() tiene valor real
+
+                        // Agregar al modelo
                         model.getRecetas().add(receta);
                         model.setRecetas(model.getRecetas());
                         model.getCurrent().setReceta(model.getRecetas());
-                        JOptionPane.showMessageDialog(null, "Medicamentos creado con exito");
+
+                        JOptionPane.showMessageDialog(null, "Receta creada con éxito. Número: " + receta.getNumero());
 
                         View.this.setVisible(false);
 
                     } catch(Exception ex){
-                        JOptionPane.showMessageDialog(null, "Error al agregar medicina: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(null, "Error al agregar receta: " + ex.getMessage());
+                        ex.printStackTrace();
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Debe seleccionar un medicamento primero.");
                 }
             }
         });
+
 
         cancelButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
