@@ -82,6 +82,17 @@ public class Service {
         else throw new Exception("Doctor no existe");
     }
 
+    public void updateDoctor(Doctor doctor) throws Exception {
+        os.writeInt(Protocol.DOCTOR_UPDATE);
+        os.writeObject(doctor);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Doctor actualizado exitosamente");
+        } else {
+            throw new Exception("Error al actualizar el doctor");
+        }
+    }
+
     public List<Doctor> loadListaDoctores(){
         List<Doctor> doctors = new ArrayList<>();
         try{
@@ -149,6 +160,17 @@ public class Service {
         os.flush();
         if(is.readInt() == Protocol.ERROR_NO_ERROR) return (Paciente) is.readObject();
         else throw new Exception("Paciente no existe");
+    }
+
+    public void updatePaciente(Paciente paciente) throws Exception {
+        os.writeInt(Protocol.PACIENTE_UPDATE);
+        os.writeObject(paciente);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Paciente actualizado exitosamente");
+        } else  {
+            throw new Exception("Front end - Error al actualizar paciente");
+        }
     }
 
     public List<Paciente> loadListaPacientes() {
@@ -221,6 +243,15 @@ public class Service {
         else throw new Exception("Farmaceuta no existe");
     }
 
+    public void updateFarmaceuta(Farmaceuta farmaceuta) throws Exception{
+        os.writeInt(Protocol.FARMACEUTA_UPDATE);
+        os.writeObject(farmaceuta);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Farmaceuta actualizado");
+        } else throw new Exception("Error al actualizar farmaceuta");
+    }
+
     public void deleteFarmaceuta(Farmaceuta farmaceuta) throws Exception {
         os.writeInt(Protocol.FARMACEUTA_DELETE);
         os.writeObject(farmaceuta);
@@ -279,6 +310,16 @@ public class Service {
         os.flush();
         if (is.readInt() == Protocol.ERROR_NO_ERROR) {
             return (Medicamento) is.readObject();
+        }
+        else throw new Exception("Medicamento no existe");
+    }
+
+    public void updateMedicamentos(Medicamento medicamento) throws Exception{
+        os.writeInt(Protocol.MEDICAMENTO_UPDATE);
+        os.writeObject(medicamento);
+        os.flush();
+        if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+            System.out.println("Medicamento actualizado");
         }
         else throw new Exception("Medicamento no existe");
     }

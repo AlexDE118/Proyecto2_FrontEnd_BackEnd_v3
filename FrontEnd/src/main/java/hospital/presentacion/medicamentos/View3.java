@@ -1,6 +1,7 @@
 package hospital.presentacion.medicamentos;
 
 import hospital.logic.Medicamento;
+import hospital.presentacion.medicamentos.actualizar.View;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,12 +22,19 @@ public class View3 implements PropertyChangeListener{
     private JButton borrarButton;
     private JTextField textField1;
     private JTextField codigo_buscar_textField;
+    private JButton actualizarButton;
+
+    private hospital.presentacion.medicamentos.actualizar.View actualizarView;
 
     public JPanel getMedicamentos_JPanel() {
         return medicamentos_JPanel;
     }
 
     public View3() {
+        actualizarView = new hospital.presentacion.medicamentos.actualizar.View();
+        actualizarView.setController(this.controller);
+        actualizarView.setModel(this.model);
+
         guardarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,6 +50,13 @@ public class View3 implements PropertyChangeListener{
                 } catch(Exception ex){
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                 }
+            }
+        });
+
+        actualizarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarView.setVisible(true);
             }
         });
 
@@ -74,6 +89,18 @@ public class View3 implements PropertyChangeListener{
 
             }
         });
+
+        table_medicamentos.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = table_medicamentos.getSelectedRow();
+                if (row != -1) {
+                    Medicamento selected = model.getMedicamentos().get(row);
+                    model.setCurrentMedicamento(selected);
+                    System.out.println(selected);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -85,6 +112,13 @@ public class View3 implements PropertyChangeListener{
 //                especialidad_textField.setText(model.getMedico().getEspecialidad());
 //               textField_clave.setText(model.getMedico().getClave());
 //                break;
+            case MedicamentosModel.CURRENT:
+                if (model.getCurrentMedicamento() != null) {
+                    codigo_textField.setText(model.getCurrentMedicamento().getCodigo());
+                    nombre_textField.setText(model.getCurrentMedicamento().getNombre());
+                    descripcion_textField.setText(model.getCurrentMedicamento().getPresentacion());
+                }
+                break;
             case MedicamentosModel.LISTAMEDICAMENTOS:
                 int[] cols = {MedicamentosTableModel.NOMBRE, MedicamentosTableModel.CODIGO, MedicamentosTableModel.PRESENTACION};
                 MedicamentosTableModel tableModel = new MedicamentosTableModel(cols, model.getMedicamentos());
@@ -102,11 +136,17 @@ public class View3 implements PropertyChangeListener{
 
     public void setController(MedicamentosController controller){
         this.controller = controller;
+        if (actualizarView != null) {
+            actualizarView.setController(controller);
+        }
     }
 
     public void setModel(MedicamentosModel model){
         this.model = model;
         model.addPropertyChangeListener(this);
+        if (actualizarView != null) {
+            actualizarView.setModel(model);
+        }
     }
 
 

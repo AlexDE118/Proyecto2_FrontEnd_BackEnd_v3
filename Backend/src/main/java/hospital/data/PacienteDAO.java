@@ -28,7 +28,7 @@ public class PacienteDAO {
                 throw new Exception("Error al insertar Paciente a database - no rows affected");
             }
         } catch (SQLException e) {
-            throw new Exception("Error en base de datos al crear paciente: " + e.getMessage(), e);
+            throw new Exception("DATABASE Error en base de datos al crear paciente: " + e.getMessage(), e);
         }
     }
 
@@ -60,20 +60,19 @@ public class PacienteDAO {
             return paciente;
         }
         else {
-            throw new Exception("Paciente no existe");
+            throw new Exception("DATABASE Paciente no existe");
         }
     }
 
     public void update(Paciente paciente) throws Exception {
-        String sql =  "update Paciente set id=?, nombre=?, telefono=?, fechaNacimiento=? where id=?";
+        String sql =  "update Paciente set nombre=?, telefono=? where id=?";
         PreparedStatement stm = db.preparedStatement(sql);
-        stm.setString(1, paciente.getId());
-        stm.setString(2, paciente.getNombre());
-        stm.setString(3, paciente.getNumeroTelefono());
-        stm.setString(4,"N/A");
+        stm.setString(1, paciente.getNombre());
+        stm.setString(2, paciente.getNumeroTelefono());
+        stm.setString(3, paciente.getId());
         int count = db.executeUpdate(stm);
         if (count == 0){
-            throw new Exception("Error al actualizar Paciente");
+            throw new Exception("DATABASE Error al actualizar Paciente");
         }
     }
 
@@ -83,7 +82,7 @@ public class PacienteDAO {
         stm.setString(1, p.getId());
         int count = db.executeUpdate(stm);
         if (count == 0){
-            throw new Exception("Error al eliminar Paciente");
+            throw new Exception("DATABASE Error al eliminar Paciente");
         }
     }
 

@@ -21,6 +21,10 @@ public class Controller {
         Service.instance().createPaciente(p);
     }
 
+    public void updatePaciente(Paciente p) throws Exception{
+        Service.instance().updatePaciente(p);
+    }
+
     public void loadPacientes() {
         model.setListaPacientes(Service.instance().loadListaPacientes());
     }

@@ -46,9 +46,9 @@ public class MedicamentoDAO {
     public void update(Medicamento medicamento) throws Exception {
         String sql = "update Medicamento set nombre = ?, presentacion = ? where id = ?";
         PreparedStatement stm = db.preparedStatement(sql);
-        stm.setString(1, medicamento.getCodigo());
-        stm.setString(2, medicamento.getNombre());
-        stm.setString(3, medicamento.getPresentacion());
+        stm.setString(1, medicamento.getNombre());
+        stm.setString(2, medicamento.getPresentacion());
+        stm.setString(3, medicamento.getCodigo());
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("Medicamento no existe");

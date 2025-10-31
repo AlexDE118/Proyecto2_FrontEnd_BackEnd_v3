@@ -61,6 +61,10 @@ public class Service {
         return doctorDAO.read(doctor.getId());
     }
 
+    public void updateDoctor(Doctor doctor) throws Exception{
+        doctorDAO.update(doctor);
+    }
+
     public List<Doctor> loadListaDoctores(){
         List<Doctor> doctors = new ArrayList<>();
         try{
@@ -94,6 +98,10 @@ public class Service {
         return pacienteDAO.read(paciente.getId());
     }
 
+    public void updatePaciente(Paciente paciente) throws Exception{
+        pacienteDAO.update(paciente);
+    }
+
     public List<Paciente> loadListaPacientes(){
         return pacienteDAO.findAll();
     }
@@ -114,7 +122,6 @@ public class Service {
 
     public void createFarmaceuta(Farmaceuta farmaceuta) throws Exception{
         farmaceutaDAO.create(farmaceuta);
-//        }
     }
 
     public Farmaceuta readFarmaceuta(Farmaceuta farmaceuta) throws Exception{
@@ -124,6 +131,10 @@ public class Service {
         }else {
             throw new Exception("Farmaceuta no existente");
         }
+    }
+
+    public void updateFarmaceuta(Farmaceuta farmaceuta) throws Exception{
+        farmaceutaDAO.update(farmaceuta);
     }
 
     public void deleteFarmaceuta(Farmaceuta farmaceuta) throws Exception {
@@ -170,6 +181,10 @@ public class Service {
         } else   {
             throw new Exception("Medicamento no existente");
         }
+    }
+
+    public void updateMedicamentos(Medicamento medicamento) throws Exception{
+        medicamentDAO.update(medicamento);
     }
 
     public List<Medicamento> loadListaMedicamentos(){

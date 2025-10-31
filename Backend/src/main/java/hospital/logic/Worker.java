@@ -109,7 +109,9 @@ public class Worker {
                         break;
                     case Protocol.DOCTOR_UPDATE:
                         try {
-                            System.out.println("PROTOCOL DOCTOR UPDATE: ");
+                            Doctor doctor = (Doctor) is.readObject();
+                            service.updateDoctor(doctor);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
                         } catch (Exception e) {
                             os.writeInt(Protocol.ERROR_ERROR);
                             System.out.println(e.getMessage());
@@ -181,10 +183,12 @@ public class Worker {
                         break;
                     case Protocol.PACIENTE_UPDATE:
                         try{
-                            System.out.println("PROTOCOL PACIENTE UPDATE: ");
+                            Paciente paciente = (Paciente) is.readObject();
+                            service.updatePaciente(paciente);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
+                            System.out.println("Worker: " + e.getMessage());
                         }
                         break;
                     case Protocol.PACIENTE_DELETE:
@@ -252,7 +256,8 @@ public class Worker {
                         break;
                     case Protocol.FARMACEUTA_UPDATE:
                         try{
-                            System.out.println("PROTOCOL FARMACEUTA UPDATE: ");
+                            Farmaceuta farmaceuta = (Farmaceuta) is.readObject();
+                            service.updateFarmaceuta(farmaceuta);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);
@@ -322,7 +327,8 @@ public class Worker {
                         break;
                     case Protocol.MEDICAMENTO_UPDATE:
                         try{
-                            System.out.println("PROTOCOL MEDICAMENTO UPDATE: ");
+                            Medicamento medicamento = (Medicamento) is.readObject();
+                            service.updateMedicamentos(medicamento);
                             os.writeInt(Protocol.ERROR_NO_ERROR);
                         } catch (Exception e){
                             os.writeInt(Protocol.ERROR_ERROR);

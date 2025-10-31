@@ -21,6 +21,10 @@ public class Controller {
         model.setCurrent(Service.instance().readDoctor(e));
     }
 
+    public void updateDoctor(Doctor doctor) throws Exception{
+        Service.instance().updateDoctor(doctor);
+    }
+
     public void createDoctor(Doctor doctor) throws Exception{
         Doctor e = new Doctor();
         Service.instance().createDoctor(doctor);

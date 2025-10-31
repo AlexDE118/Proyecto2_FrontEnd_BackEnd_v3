@@ -49,11 +49,14 @@ public class DoctorDAO {
     }
 
     public void update(Doctor doctor) throws Exception {
-        String sql = "update doctor set nombre = ?, clave = ? where id = ?";
+        String sql = "update doctor set nombre = ?, especialidad = ?, clave = ? where id = ?";
         PreparedStatement stm = db.preparedStatement(sql);
-        //stm.setString(1, doctor.getId());
-        stm.setString(2, doctor.getNombre());
+
+        stm.setString(1, doctor.getNombre());
+        stm.setString(2, doctor.getEspecialidad());
         stm.setString(3, doctor.getClave());
+        stm.setString(4, doctor.getId());
+
         int count = db.executeUpdate(stm);
         if(count == 0)
             throw new Exception("Error al actualizar doctor en database");
@@ -86,7 +89,7 @@ public class DoctorDAO {
     public List<Doctor> findByName(String filtro) throws Exception {
         List<Doctor> doctors = new ArrayList<>();
         try {
-            String sql = "select * from doctor d where d.nombre = ?";
+            String sql = "select * from doctor d where d.nombre like ?";
             PreparedStatement stm = db.preparedStatement(sql);
             stm.setString(1, "%"+filtro+"%");
             ResultSet rs = db.executeQuery(stm);
@@ -102,7 +105,7 @@ public class DoctorDAO {
     public List<Doctor> findByID(String filtro) throws Exception {
         List<Doctor> doctors = new ArrayList<>();
         try {
-            String sql = "select * from doctor d where d.id = ?";
+            String sql = "select * from doctor d where d.id like ?";
             PreparedStatement stm = db.preparedStatement(sql);
             stm.setString(1, "%"+filtro+"%");
             ResultSet rs = db.executeQuery(stm);

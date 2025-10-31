@@ -27,6 +27,10 @@ public class MedicamentosController {
         Service.instance().readMedicamentos(e);
     }
 
+    public void updateMedicamentos(Medicamento e) throws Exception {
+        Service.instance().updateMedicamentos(e);
+    }
+
     public void loadMedicamentos(){
         model.setMedicamentos(Service.instance().loadListaMedicamentos());
     }

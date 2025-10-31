@@ -46,8 +46,9 @@ public class FarmaceutaDAO {
     public void update(Farmaceuta farmaceuta) throws Exception {
         String sql = "update Farmaceuta set nombre = ?, clave = ? where id = ?";
         PreparedStatement stm = db.preparedStatement(sql);
-        stm.setString(2, farmaceuta.getNombre());
-        stm.setString(3, farmaceuta.getClave());
+        stm.setString(1, farmaceuta.getNombre());
+        stm.setString(2, farmaceuta.getClave());
+        stm.setString(3, farmaceuta.getId());
         int count = db.executeUpdate(stm);
         if (count == 0) {
             throw new Exception("Error al actualizar farmaceuta");

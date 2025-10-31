@@ -23,6 +23,10 @@ public class Controller {
         Farmaceuta farmaceuta = new Farmaceuta();
     }
 
+    public void updateFarmaceuta(Farmaceuta farmaceuta) throws Exception{
+        Service.instance().updateFarmaceuta(farmaceuta);
+    }
+
     public void createFarmaceuta(Farmaceuta farmaceuta) throws Exception{
         Farmaceuta farmaceuta1 = new Farmaceuta();
         Service.instance().createFarmaceuta(farmaceuta);

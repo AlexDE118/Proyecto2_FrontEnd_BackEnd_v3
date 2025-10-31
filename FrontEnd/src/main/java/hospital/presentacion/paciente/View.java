@@ -20,6 +20,9 @@ public class View implements PropertyChangeListener {
     private JButton reporteButton;
     private JTable listaPacientes_Table;
     private JTextField telefono_textField;
+    private JButton actualizarButton;
+
+    private hospital.presentacion.paciente.actualizar.View actualizarView;
 
     public JPanel getPacientesJPanel() {
         telefono_textField.setText("");
@@ -27,7 +30,9 @@ public class View implements PropertyChangeListener {
     }
 
     public View(){
-
+        actualizarView = new hospital.presentacion.paciente.actualizar.View();
+        actualizarView.setController(this.controller);
+        actualizarView.setModel(this.model);
 
         guardarButton.addActionListener(new ActionListener() {
             @Override
@@ -52,6 +57,13 @@ public class View implements PropertyChangeListener {
                 telefono_textField.setText("");
                 id_textField.setText("");
                 nombre_textField.setText("");
+            }
+        });
+
+        actualizarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizarView.setVisible(true);
             }
         });
 
@@ -119,9 +131,15 @@ public class View implements PropertyChangeListener {
 
     public void setModel(Model model){
         this.model=model;
+        if(actualizarView!=null){
+            actualizarView.setModel(model);
+        }
     }
     public void setController(Controller controller){
         this.controller=controller;
+        if(actualizarView!=null){
+            actualizarView.setController(controller);
+        }
     }
 
     @Override
