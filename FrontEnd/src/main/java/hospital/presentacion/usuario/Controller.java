@@ -5,9 +5,10 @@ import hospital.logic.Usuario;
 import hospital.presentacion.Sesion;
 import hospital.presentacion.ThreadListener;
 
+import javax.swing.*;
 import java.util.List;
 
-public class Controller implements ThreadListener {
+public class Controller extends JOptionPane implements ThreadListener {
     View view;
     Model model;
 
@@ -21,13 +22,13 @@ public class Controller implements ThreadListener {
         view.setModel(model);
         model.addPropertyChangeListener(view);
 
-        // Load all users from service
         List<Usuario> usuarios = Service.instance().loadListaUsuarios();
         model.setUsuarios(usuarios);
-
-        // IMPORTANT: Check if current session user is in the list and mark as logged
         Usuario currentSessionUser = Sesion.getUsuario();
         if (currentSessionUser != null) {
+            model.setCurrent(currentSessionUser);
+            view.getUsuarioActual().setText(currentSessionUser.getId());
+
             for (Usuario usuario : usuarios) {
                 if (usuario.getId().equals(currentSessionUser.getId())) {
                     usuario.setLogged(true);
@@ -49,27 +50,148 @@ public class Controller implements ThreadListener {
     }
 
     @Override
-    public void deliver_message(String message){
+    public void deliver_message_status_change(Usuario usuario) {
+        // Update the user in the local model
+        for (Usuario user : model.getUsuarios()) {
+            if (user.getId().equals(usuario.getId())) {
+                user.setMessage(usuario.getMessage());
+                break;
+            }
+        }
 
+        // Refresh the table to show the updated message status
+        model.loadLoggedUsersFromList();
+        fireTableDataChanged();
+
+        System.out.println("Controller: Received message status change for " + usuario.getId());
     }
 
-//    @Override
-//    public void deliver_login(Usuario usuario){
+    public void setMessageToEmpty(Usuario usuario) {
+        try {
+            Usuario updatedUser = Service.instance().readUsuario(usuario);
+            updatedUser.setMessage("");
+            Service.instance().sendMessage(updatedUser);
+            System.out.println("Message cleared for: " + updatedUser.getId());
+            for (Usuario user : model.getUsuarios()) {
+                if (user.getId().equals(updatedUser.getId())) {
+                    user.setMessage("");
+                    break;
+                }
+            }
+            model.getCurrent().setMessage("");
+            broadcastMessageStatusChange(updatedUser);
+            refreshUsersList();
+
+        } catch (Exception e) {
+            System.err.println("Error clearing message: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al limpiar el mensaje: " + e.getMessage());
+        }
+    }
+
+    private void broadcastMessageStatusChange(Usuario usuario) {
+        try {
+            Service.instance().broadcastMessageStatusChange(usuario);
+        } catch (Exception e) {
+            System.err.println("Error broadcasting message status: " + e.getMessage());
+        }
+    }
+
+//    public void setMessageToEmpty(Usuario usuario) {
 //        try {
-//            // Use the new method to update status and refresh
-//            model.updateUserLoggedStatus(usuario, true);
-//            System.out.println("Usuario " + usuario.getId() + " ha iniciado sesión");
+//            Usuario currentUser = Sesion.getUsuario();
+//            String messageContent = model.getCurrent().getMessage();
+//            usuario.setMessage("");
+//            Service.instance().sendMessage(usuario);
+//            System.out.println("Mensaje enviado a: " + usuario.getId());
+//            model.getCurrent().setMessage("");
+//            refreshUsersList();
+//
 //        } catch (Exception e) {
-//            System.err.println("Error en deliver_login: " + e.getMessage());
+//            System.err.println("Error al enviar mensaje: " + e.getMessage());
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Error al enviar el mensaje: " + e.getMessage());
 //        }
 //    }
+
+    public void sendMessageToUser(Usuario recipientUser) {
+        try {
+            Usuario currentUser = Sesion.getUsuario();
+            String messageContent = model.getCurrent().getMessage();
+
+            if (messageContent == null || messageContent.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El mensaje no puede estar vacío");
+                return;
+            }
+            Usuario updatedRecipient = Service.instance().readUsuario(recipientUser);
+            String formattedMessage = currentUser.getId() + ": " + messageContent;
+            updatedRecipient.setMessage(formattedMessage);
+            Service.instance().sendMessage(updatedRecipient);
+            System.out.println("Mensaje enviado a: " + updatedRecipient.getId());
+            for (Usuario user : model.getUsuarios()) {
+                if (user.getId().equals(updatedRecipient.getId())) {
+                    user.setMessage(formattedMessage);
+                    break;
+                }
+            }
+
+            model.getCurrent().setMessage("");
+            broadcastMessageStatusChange(updatedRecipient);
+            refreshUsersList();
+
+        } catch (Exception e) {
+            System.err.println("Error al enviar mensaje: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al enviar el mensaje: " + e.getMessage());
+        }
+    }
+
+    private void refreshUsersList() {
+        try {
+            List<Usuario> updatedUsers = Service.instance().loadListaUsuarios();
+            model.setUsuarios(updatedUsers);
+            model.loadLoggedUsersFromList();
+            fireTableDataChanged();
+
+        } catch (Exception e) {
+            System.err.println("Error refreshing users list: " + e.getMessage());
+        }
+    }
+
+    private void fireTableDataChanged() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                int[] cols = {TableModel.ID, TableModel.MENSAJES};
+                TableModel tableModel = new TableModel(cols, model.getLoggedUsers());
+                view.getUsuariosOnline().setModel(tableModel);
+                view.getUsuariosOnline().updateUI();
+            }
+        });
+    }
+
+    @Override
+    public void deliver_message(String message){
+        refreshUsersList();
+        Usuario currentUser = Sesion.getUsuario();
+        if (currentUser != null) {
+            for (Usuario user : model.getUsuarios()) {
+                if (user.getId().equals(currentUser.getId()) &&
+                        user.getMessage() != null && !user.getMessage().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null,
+                            "Tienes un nuevo mensaje:\n" + user.getMessage(),
+                            "Nuevo Mensaje",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                }
+            }
+        }
+    }
 
     @Override
     public void deliver_login(Usuario usuario){
         try {
             System.out.println("Controller: Received login notification for " + usuario.getId());
-
-            // Reload the complete user list to ensure we have current data
             List<Usuario> allUsers = Service.instance().loadListaUsuarios();
 
             boolean found = false;
@@ -83,13 +205,10 @@ public class Controller implements ThreadListener {
             }
 
             if (!found) {
-                // If user not found, add them with logged status
                 usuario.setLogged(true);
                 allUsers.add(usuario);
                 System.out.println("Controller: Added new user " + usuario.getId() + " with logged=true");
             }
-
-            // Update the model with the refreshed list
             model.setUsuarios(allUsers);
             model.loadLoggedUsersFromList();
 
@@ -101,23 +220,10 @@ public class Controller implements ThreadListener {
         }
     }
 
-//    @Override
-//    public void deliver_logout(Usuario usuario){
-//        try {
-//            // Use the new method to update status and refresh
-//            model.updateUserLoggedStatus(usuario, false);
-//            System.out.println("Usuario " + usuario.getId() + " ha cerrado sesión");
-//        } catch (Exception e) {
-//            System.err.println("Error en deliver_logout: " + e.getMessage());
-//        }
-//    }
-
     @Override
     public void deliver_logout(Usuario usuario){
         try {
             System.out.println("Controller: Received logout notification for " + usuario.getId());
-
-            // Update the user's logged status in the model
             List<Usuario> allUsers = model.getUsuarios();
             for (Usuario user : allUsers) {
                 if (user.getId().equals(usuario.getId())) {
@@ -126,8 +232,6 @@ public class Controller implements ThreadListener {
                     break;
                 }
             }
-
-            // Refresh the logged users list
             model.loadLoggedUsersFromList();
             System.out.println("Controller: Logged users count after logout: " + model.getLoggedUsers().size());
 

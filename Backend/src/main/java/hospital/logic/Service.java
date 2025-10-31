@@ -396,6 +396,10 @@ public class Service {
         usuarioDAO.updateLogged(usuario);
     }
 
+    public void sendMessage(Usuario usuario) throws Exception {
+        usuarioDAO.sendMessage(usuario);
+    }
+
     public void updateMessage(String message) throws Exception {
         Usuario usuario = new Usuario();
         try{

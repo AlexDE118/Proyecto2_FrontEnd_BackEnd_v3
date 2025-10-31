@@ -10,6 +10,7 @@ import java.util.List;
 public class Model extends AbstractModel {
 Usuario filter;
 Usuario current;
+Usuario currentLoggedUser;
 List<Usuario> usuarios;
 List<Usuario> loggedUsers;
 int mode;
@@ -18,6 +19,7 @@ public static final String CURRENT = "current";
 public static final String LISTAUSUARIOS = "listaUsuarios";
 public static final String FILTER = "filter";
 public static final String LOGGEDUSERS = "loggedUsers";
+public static final String CURRENTLOGGEDUSER = "currentLoggedUser";
 
 public Model() {
     loggedUsers = new ArrayList<>();
@@ -26,9 +28,6 @@ public Model() {
 public void init() {
     filter = new Usuario();
     current = new Usuario();
-//    List<Usuario> rows= new ArrayList<>();
-//    this.setUsuarios(rows);
-//    mode = Application.MODE_CREATE;
 }
 
 @Override
@@ -37,6 +36,7 @@ public void addPropertyChangeListener(PropertyChangeListener listener) {
     firePropertyChange(CURRENT);
     firePropertyChange(LISTAUSUARIOS);
     firePropertyChange(LOGGEDUSERS);
+    firePropertyChange(CURRENTLOGGEDUSER);
 }
 
 public void setLoggedUsers(List<Usuario> loggedUsers) {
@@ -74,27 +74,6 @@ public void setLoggedUsers(List<Usuario> loggedUsers) {
         // Force refresh of logged users list
         loadLoggedUsersFromList();
     }
-
-
-
-//public void addLoggedUser(Usuario usuario) {
-//    if (!isUserLogged(usuario)) {
-//        this.loggedUsers.add(usuario);
-//        firePropertyChange(LOGGEDUSERS);
-//    }
-//}
-//
-//public void removeLoggedUser(Usuario usuario) {
-//    boolean removed = this.loggedUsers.removeIf(user -> user.getId().equals(usuario.getId()));
-//    if (removed) {
-//        firePropertyChange(LOGGEDUSERS);
-//    }
-//}
-//
-//public boolean isUserLogged(Usuario usuario) {
-//    return this.loggedUsers.stream()
-//            .anyMatch(user -> user.getId().equals(usuario.getId()));
-//}
 
 public void setFilter(Usuario filter) {
     this.filter = filter;
@@ -135,4 +114,13 @@ public void addUsuario(Usuario usuario) {
     this.usuarios.add(usuario);
     firePropertyChange(LISTAUSUARIOS);
 }
+
+public void setCurrentLoggedUser(Usuario currentLoggedUser) {
+    this.currentLoggedUser = currentLoggedUser;
+}
+
+public Usuario getCurrentLoggedUser() {
+    return currentLoggedUser;
+}
+
 }
