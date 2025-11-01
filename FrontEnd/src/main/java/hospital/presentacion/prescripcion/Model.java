@@ -51,6 +51,11 @@ public class Model extends AbstractModel {
         this.current = current;
         firePropertyChange(CURRENT);
         firePropertyChange(PACIENT);
+        // Also fire recetas change when current changes
+        if (current != null && current.getReceta() != null) {
+            this.recetas = current.getReceta();
+            firePropertyChange(RECETAS);
+        }
     }
 
     public List<Receta> getRecetas() {

@@ -83,19 +83,19 @@ public class Application {
         JTabbedPane tabbedPane = new JTabbedPane();
         window.setSize(1300, 500);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        window.setContentPane(tabbedPane);
-        //window.add(tabbedPane);
+//        window.setContentPane(tabbedPane);
+        window.add(tabbedPane);
 
         // AGREGAR TODOS LOS TABS
-        tabbedPane.addTab("Doctores", doctorView.getMedicos_JPanel());
-        tabbedPane.addTab("Medicamentos", medicamentosView.getMedicamentos_JPanel());
-        tabbedPane.addTab("Farmaceutas", farmaceutaView.getFarmaceutaPanel());
-        tabbedPane.addTab("Pacientes", pacienteView.getPacientesJPanel());
-        tabbedPane.addTab("Prescripcion", prescripcionView.getPrescripcionJPanel());
-        tabbedPane.addTab("Despacho", despachoView.getDespacho_JPanel());
-        tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
-        tabbedPane.addTab("Historico",historicoView.getHistoricoJPanel());
-        tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
+//        tabbedPane.addTab("Doctores", doctorView.getMedicos_JPanel());
+//        tabbedPane.addTab("Medicamentos", medicamentosView.getMedicamentos_JPanel());
+//        tabbedPane.addTab("Farmaceutas", farmaceutaView.getFarmaceutaPanel());
+//        tabbedPane.addTab("Pacientes", pacienteView.getPacientesJPanel());
+//        tabbedPane.addTab("Prescripcion", prescripcionView.getPrescripcionJPanel());
+//        tabbedPane.addTab("Despacho", despachoView.getDespacho_JPanel());
+//        tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
+//        tabbedPane.addTab("Historico",historicoView.getHistoricoJPanel());
+//        tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
 
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
@@ -133,28 +133,45 @@ public class Application {
 
                 switch (tipo) {
                     case "Doctor":
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Prescripcion"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
+                        tabbedPane.addTab("Prescripcion", prescripcionView.getPrescripcionJPanel());
+                        tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
+                        tabbedPane.addTab("Historico", historicoView.getHistoricoJPanel());
+                        tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Prescripcion"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     case "Farmaceuta":
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Despacho"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
+                        tabbedPane.addTab("Despacho", despachoView.getDespacho_JPanel());
+                        tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
+                        tabbedPane.addTab("Historico", historicoView.getHistoricoJPanel());
+                        tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Despacho"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     case "Admin":
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Doctores"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Farmaceutas"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Pacientes"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Medicamentos"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
-                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
+                        tabbedPane.addTab("Doctores", doctorView.getMedicos_JPanel());
+                        tabbedPane.addTab("Medicamentos", medicamentosView.getMedicamentos_JPanel());
+                        tabbedPane.addTab("Farmaceutas", farmaceutaView.getFarmaceutaPanel());
+                        tabbedPane.addTab("Pacientes", pacienteView.getPacientesJPanel());
+                        //tabbedPane.addTab("Prescripcion", prescripcionView.getPrescripcionJPanel());
+                        //tabbedPane.addTab("Despacho", despachoView.getDespacho_JPanel());
+                        tabbedPane.addTab("Dashboard", dashboardView.getDashboard_JPanel());
+                        tabbedPane.addTab("Historico", historicoView.getHistoricoJPanel());
+                        tabbedPane.addTab("Acerca de", acercaDeView.getAcercaDeJPanel());
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Doctores"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Farmaceutas"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Pacientes"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Medicamentos"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Dashboard"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Historico"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Acerca de"), true);
+//                        tabbedPane.setEnabledAt(tabbedPane.indexOfTab("Usuarios"), true);
                         break;
                     default:
                         JOptionPane.showMessageDialog(window, "Usuario inválido");

@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
-
+import java.time.LocalDate;
 
 public class Worker {
     Server srv;
@@ -377,11 +377,17 @@ public class Worker {
 
                     // DASHBOARD
                     case Protocol.DASHBOARD_GETPRESCRIPCIONES:
-                        try{
-                            System.out.println("PROTOCOL DASHBOARD GETPRESCRIPCIONES: ");
-                        } catch (Exception e){
+                        try {
+                            LocalDate desde = (LocalDate) is.readObject();
+                            LocalDate hasta = (LocalDate) is.readObject();
+                            String medicamento = (String) is.readObject();
+
+                            List<Prescripcion> prescripciones = service.getPrescripciones(desde, hasta, medicamento);
+                            os.writeInt(Protocol.ERROR_NO_ERROR);
+                            os.writeObject(prescripciones);
+                        } catch (Exception e) {
                             os.writeInt(Protocol.ERROR_ERROR);
-                            System.out.println(e.getMessage());
+                            System.out.println("Error in DASHBOARD_GETPRESCRIPCIONES: " + e.getMessage());
                         }
                         break;
 

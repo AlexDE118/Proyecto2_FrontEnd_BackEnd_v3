@@ -87,7 +87,7 @@ public class MedicamentoDAO {
             String sql = "select * from Medicamento m "
                     + "where m.nombre like ?";
             PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            stm.setString(2, "%" + filtro + "%");
+            stm.setString(1, "%" + filtro + "%");
             ResultSet rs = db.executeQuery(stm);
             Medicamento medicamento;
             while (rs.next()) {

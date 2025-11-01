@@ -11,7 +11,7 @@ import java.util.List;
 
 //singleton
 
-public class Service {
+public class Service { //PROXY
     private static Service instance;
     public static Service instance(){
         if(instance == null) instance = new Service();
@@ -524,7 +524,24 @@ public class Service {
 
     //======================= DASHBOARD ======================//
     public List<Prescripcion> getPrescripciones(LocalDate desde, LocalDate hasta, String medicamento) {
-        List<Prescripcion> resultado = new ArrayList<>();
+        //List<Prescripcion> resultado = new ArrayList<>();
+        try {
+            os.writeInt(Protocol.DASHBOARD_GETPRESCRIPCIONES);
+            os.writeObject(desde);
+            os.writeObject(hasta);
+            os.writeObject(medicamento);
+            os.flush();
+
+            if (is.readInt() == Protocol.ERROR_NO_ERROR) {
+                return (List<Prescripcion>) is.readObject();
+            } else {
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            System.out.println("Error getting prescripciones: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
 //        listas.getPrescripciones().forEach(p ->
 //                System.out.println("Prescripcion: " + p.getPaciente().getNombre() + ", " +
 //                        "Fecha: " + p.getFechaRetiro() + ", Recetas: " +
@@ -537,8 +554,8 @@ public class Service {
 //                        || p.getReceta().stream()  // recorremos la lista de recetas
 //                        .anyMatch(r -> r.getMedicamentos().getNombre().equalsIgnoreCase(medicamento)))
 //                .collect(Collectors.toList());
-        return resultado;
-    }
+//        return resultado;
+//    }
 
     //======================= USUARIO =======================//
 

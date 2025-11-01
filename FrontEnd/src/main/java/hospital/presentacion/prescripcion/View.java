@@ -101,7 +101,6 @@ public class View implements PropertyChangeListener {
             if (row != -1) {
                 Receta receta = model.getCurrent().getReceta().get(row);
                 Prescripcion prescripcion = model.getCurrent(); // la que se está editando
-
                 controller.removeRecetaFromPrescripcion(prescripcion, receta);
             } else {
                 JOptionPane.showMessageDialog(prescripcionJPanel, "Seleccione un medicamento para descartar.");
@@ -155,15 +154,22 @@ public class View implements PropertyChangeListener {
         switch (evt.getPropertyName()){
             case Model.RECETAS:
                 int[] cols = {TableModel.MEDICAMENTO,TableModel.CANTIDAD,TableModel.DURACION,TableModel.INDICACIONES};
-                listaMedicamentos_JTable.setModel(new TableModel(cols,model.getRecetas()));
+                listaMedicamentos_JTable.setModel(new TableModel(cols, model.getRecetas()));
                 break;
             case Model.PACIENT: {
                 if (model.getCurrent().getPaciente() != null) {
                     pacienteLabel.setText(model.getCurrent().getPaciente().getNombre());
-                } else pacienteLabel.setText("Paciente no seleccionado");
+                } else {
+                    pacienteLabel.setText("Paciente no seleccionado");
+                }
+                break;
             }
-            break;
-            //case : {}
+            case Model.CURRENT:
+                // When current is cleared, also clear the recetas display
+                if (model.getCurrent().getReceta() == null || model.getCurrent().getReceta().isEmpty()) {
+                    model.setRecetas(new ArrayList<>());
+                }
+                break;
         }
     }
 }

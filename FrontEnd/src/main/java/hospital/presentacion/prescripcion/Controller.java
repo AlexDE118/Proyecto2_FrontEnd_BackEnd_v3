@@ -7,6 +7,7 @@ import hospital.logic.Receta;
 import hospital.logic.Service;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
@@ -28,9 +29,21 @@ public class Controller {
     public void createPrescripcion(Prescripcion prescripcion) throws Exception {
         prescripcion.setPaciente(model.current.getPaciente());
         Service.instance().createPrescripcion(prescripcion);
+
         model.setCurrent(new Prescripcion());
+        model.setRecetas(new ArrayList<>());
+
         model.setPacientes(Service.instance().loadListaPacientes());
     }
+
+//    public void createPrescripcion(Prescripcion prescripcion) throws Exception {
+//        prescripcion.setPaciente(model.current.getPaciente());
+//        Service.instance().createPrescripcion(prescripcion);
+//        model.setCurrent(new Prescripcion());
+//        model.setPacientes(Service.instance().loadListaPacientes());
+//
+//
+//    }
 
     public Receta createReceta(Receta receta) throws Exception {
         return Service.instance().createReceta(receta); // ahora devuelve el objeto con numero
@@ -82,8 +95,10 @@ public class Controller {
 
     public void removeRecetaFromPrescripcion(Prescripcion prescripcion, Receta receta) {
         try {
+            prescripcion.getReceta().remove(receta);
+            model.setRecetas(prescripcion.getReceta());
             Service.instance().removeRecetaFromPrescripcion(prescripcion, receta);
-            model.setRecetas(prescripcion.getReceta()); // refresca el modelo
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al descartar medicamento: " + e.getMessage());
         }

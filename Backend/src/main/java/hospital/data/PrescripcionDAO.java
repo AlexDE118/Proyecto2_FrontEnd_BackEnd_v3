@@ -130,6 +130,64 @@ public class PrescripcionDAO {
         return resultado;
     }
 
+    public List<Prescripcion> findByDateRangeAndMedicamento(LocalDate desde, LocalDate hasta, String medicamento) throws Exception {
+        List<Prescripcion> resultado = new ArrayList<>();
+
+        // Debug output
+        System.out.println("Buscando prescripciones con parámetros:");
+        System.out.println("Desde: " + desde);
+        System.out.println("Hasta: " + hasta);
+        System.out.println("Medicamento: " + medicamento);
+
+        String sql = "SELECT p.*, pac.*, r.*, m.* FROM Prescripcion p " +
+                "INNER JOIN Paciente pac ON p.paciente = pac.id " +
+                "INNER JOIN Receta r ON p.receta = r.numero " +
+                "INNER JOIN Medicamento m ON r.medicamentos = m.id " +
+                "WHERE p.fechaRetiro BETWEEN ? AND ? ";
+
+        if (medicamento != null && !medicamento.isEmpty() && !medicamento.equalsIgnoreCase("Todos")) {
+            sql += "AND m.nombre = ? ";
+        }
+
+        sql += "ORDER BY p.fechaConfeccion DESC";
+
+        System.out.println("SQL: " + sql);
+
+        PreparedStatement stm = db.preparedStatement(sql, Statement.NO_GENERATED_KEYS);
+        stm.setDate(1, java.sql.Date.valueOf(desde));
+        stm.setDate(2, java.sql.Date.valueOf(hasta));
+
+        if (medicamento != null && !medicamento.isEmpty() && !medicamento.equalsIgnoreCase("Todos")) {
+            stm.setString(3, medicamento);
+        }
+
+        ResultSet rs = db.executeQuery(stm);
+
+        PacienteDAO pdao = new PacienteDAO();
+        RecetaDAO rdao = new RecetaDAO();
+        MedicamentoDAO mdao = new MedicamentoDAO();
+
+        int count = 0;
+        while (rs.next()) {
+            count++;
+            Prescripcion p = from(rs, "p");
+            p.setPaciente(pdao.from(rs, "pac"));
+            Receta receta = rdao.from(rs, "r");
+            if (receta != null) {
+                Medicamento medicamentoObj = mdao.from(rs, "m");
+                receta.setMedicamentos(medicamentoObj);
+                List<Receta> recetas = new ArrayList<>();
+                recetas.add(receta);
+                p.setReceta(recetas);
+            }
+            resultado.add(p);
+            System.out.println("Encontrada prescripción ID: " + p.getId() + ", Paciente: " + p.getPaciente().getNombre());
+        }
+
+        System.out.println("Total de prescripciones encontradas: " + count);
+        return resultado;
+    }
+
     public List<Prescripcion> findByID(String id) {
         List<Prescripcion> resultado = new ArrayList<>();
         try{

@@ -297,11 +297,26 @@ public class Service {
         if (!prescripcion.getReceta().remove(receta)) {
             throw new Exception("La receta no existe en esta prescripción");
         }
+        prescripcionDAO.update(prescripcion);
     }
 
     //======================= DASHBOARD ======================//
     public List<Prescripcion> getPrescripciones(LocalDate desde, LocalDate hasta, String medicamento) {
-        List<Prescripcion> resultado = new ArrayList<>();
+        System.out.println("Service.getPrescripciones called with:");
+        System.out.println("Desde: " + desde);
+        System.out.println("Hasta: " + hasta);
+        System.out.println("Medicamento: " + medicamento);
+
+        try {
+            List<Prescripcion> result = prescripcionDAO.findByDateRangeAndMedicamento(desde, hasta, medicamento);
+            System.out.println("DAO returned: " + result.size() + " prescripciones");
+            return result;
+        } catch (Exception e) {
+            System.out.println("Error in getPrescripciones: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 //        listas.getPrescripciones().forEach(p ->
 //                System.out.println("Prescripcion: " + p.getPaciente().getNombre() + ", " +
 //                        "Fecha: " + p.getFechaRetiro() + ", Recetas: " +
@@ -314,8 +329,8 @@ public class Service {
 //                        || p.getReceta().stream()  // recorremos la lista de recetas
 //                        .anyMatch(r -> r.getMedicamentos().getNombre().equalsIgnoreCase(medicamento)))
 //                .collect(Collectors.toList());
-        return resultado;
-    }
+        //return resultado;
+//    }
 
     //======================= USUARIO =======================//
 
