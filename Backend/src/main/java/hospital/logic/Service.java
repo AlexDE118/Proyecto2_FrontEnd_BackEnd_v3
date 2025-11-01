@@ -269,8 +269,10 @@ public class Service {
     public List<Prescripcion> loadListaPrescripciones(){
         List<Prescripcion> prescripciones = new ArrayList<>();
         try{
-
-        } catch (Exception e) { }
+            prescripciones = prescripcionDAO.findAll();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         return prescripciones;
     }
 

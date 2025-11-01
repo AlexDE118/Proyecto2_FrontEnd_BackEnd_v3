@@ -20,6 +20,11 @@ public class TableModel extends AbstractTableModel {
         this.rows = rows;
     }
 
+    public void setRows(List<Prescripcion> rows) {
+        this.rows = rows;
+        fireTableDataChanged();
+    }
+
     @Override
     public int getRowCount() {
         return rows.size();

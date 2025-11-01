@@ -72,15 +72,16 @@ public class RecetaDAO {
     }
 
     public Receta from(ResultSet rs, String alias) {
-        MedicamentoDAO md = new MedicamentoDAO();
-        try{
+        try {
             Receta r = new Receta();
-            r.setCantidad(rs.getInt(alias+ ".cantidad"));
-            r.setDuracion(rs.getInt(alias+ ".duracion"));
-            r.setIndicaciones(rs.getString(alias+ ".indicaciones"));
-            //r.setMedicamentos();
+            r.setNumero(rs.getInt(alias + ".numero"));
+            r.setCantidad(rs.getInt(alias + ".cantidad"));
+            r.setDuracion(rs.getInt(alias + ".duracion"));
+            r.setIndicaciones(rs.getString(alias + ".indicaciones"));
+            // Note: Medicamento will be set separately in the PrescripcionDAO
             return r;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return null;
         }
     }

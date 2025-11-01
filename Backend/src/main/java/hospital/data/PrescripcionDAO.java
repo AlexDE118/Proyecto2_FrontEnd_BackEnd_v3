@@ -1,5 +1,6 @@
 package hospital.data;
 
+import hospital.logic.Medicamento;
 import hospital.logic.Prescripcion;
 import hospital.logic.Receta;
 
@@ -76,13 +77,57 @@ public class PrescripcionDAO {
     }
 
     public void update(Prescripcion p) throws Exception {
+        String sql = "UPDATE Prescripcion SET estado = ?, fechaConfeccion = ?, fechaRetiro = ? WHERE id = ?";
+        PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
+        stm.setString(1, p.getEstado());
+        stm.setDate(2, java.sql.Date.valueOf(p.getFechaConfeccion()));
+        stm.setDate(3, java.sql.Date.valueOf(p.getFechaRetiro()));
+        stm.setString(4, p.getId());
+
+        int count = db.executeUpdate(stm);
+        if (count == 0) {
+            throw new Exception("Prescripción no encontrada para actualizar");
+        }
     }
 
     public void delete(Prescripcion p) throws Exception {
         String sql = "delete from Prescripcion p where p.id = ?";
         PreparedStatement stm = db.preparedStatement(sql, Statement.RETURN_GENERATED_KEYS);
         stm.setString(1,p.getId());
+    }
+
+    public List<Prescripcion> findAll() throws Exception {
+        List<Prescripcion> resultado = new ArrayList<>();
+
+        String sql = "SELECT p.*, pac.*, r.*, m.* FROM Prescripcion p " +
+                "INNER JOIN Paciente pac ON p.paciente = pac.id " +
+                "INNER JOIN Receta r ON p.receta = r.numero " +
+                "INNER JOIN Medicamento m ON r.medicamentos = m.id " +
+                "ORDER BY p.fechaConfeccion DESC";
+
+        PreparedStatement stm = db.preparedStatement(sql, Statement.NO_GENERATED_KEYS);
+        ResultSet rs = db.executeQuery(stm);
+
+        PacienteDAO pdao = new PacienteDAO();
+        RecetaDAO rdao = new RecetaDAO();
+        MedicamentoDAO mdao = new MedicamentoDAO();
+
+        while (rs.next()) {
+            Prescripcion p = from(rs, "p");
+            p.setPaciente(pdao.from(rs, "pac"));
+            Receta receta = rdao.from(rs, "r");
+            if (receta != null) {
+                Medicamento medicamento = mdao.from(rs, "m");
+                receta.setMedicamentos(medicamento);
+                List<Receta> recetas = new ArrayList<>();
+                recetas.add(receta);
+                p.setReceta(recetas);
+            }
+
+            resultado.add(p);
+        }
+        return resultado;
     }
 
     public List<Prescripcion> findByID(String id) {
@@ -103,6 +148,7 @@ public class PrescripcionDAO {
         RecetaDAO rdao = new RecetaDAO();
         try{
             Prescripcion p = new Prescripcion();
+            p.setId(rs.getString(alias+ ".id"));
             p.setEstado(rs.getString(alias + ".estado"));
             p.setFechaConfeccion(LocalDate.parse(rs.getString(alias+ ".fechaConfeccion")));
             p.setFechaRetiro(LocalDate.parse(rs.getString(alias+ ".fechaRetiro")));

@@ -16,6 +16,8 @@ public class Controller {
         view.setController(this);
         view.setModel(model);
         model.setPrescripciones(Service.instance().loadListaPrescripciones());
+
+
     }
 
     public void clear(){

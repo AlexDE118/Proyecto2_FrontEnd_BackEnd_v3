@@ -14,6 +14,13 @@ public class Controller {
         this.view = view;
         this.view.setController(this);
         this.view.setModel(this.model);
+
+        cargarTodasLasPrescripciones();
+    }
+
+    public void cargarTodasLasPrescripciones() {
+        List<Prescripcion> todas = Service.instance().loadListaPrescripciones();
+        model.setPrescripciones(todas);
     }
 
     public void buscarPrescripciones(String criterio) {
@@ -25,6 +32,5 @@ public class Controller {
         prescripcion.setEstado(nuevoEstado);
         Service.instance().actualizarPrescripcion(prescripcion);
         model.setSeleccionada(prescripcion);
-
     }
 }
